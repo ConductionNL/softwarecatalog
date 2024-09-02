@@ -42,9 +42,9 @@ Submit a [feature request](https://github.com/OpenCatalogi/.github/issues/new/ch
 
     <navigations>
         <navigation>
-            <id>softwarecatalogus</id>
+            <id>softwarecatalog</id>
             <name>Software Catalogs</name>
-            <route>softwarecatalogus.dashboard.page</route>
+            <route>softwarecatalog.dashboard.page</route>
         </navigation>
     </navigations>
 </info>
