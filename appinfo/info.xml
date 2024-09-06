@@ -23,28 +23,26 @@ Submit a [bug report](https://github.com/OpenCatalogi/.github/issues/new/choose)
 Submit a [feature request](https://github.com/OpenCatalogi/.github/issues/new/choose).
     ]]></description>
     <version>0.1.2</version>
-    <license>AGPL</license>
+    <licence>agpl</licence>
+    <category>organization</category>
     <author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
     <namespace>SoftwareCatalog</namespace>
-    <category>organisation</category>
     <website>https://github.com/ConductionNL/SoftwareCatalogus</website>
     <bugs>https://github.com/ConductionNL/SoftwareCatalogus/issues</bugs>
-    <repository type="git">https://github.com/ConductionNL/SoftwareCatalogus.git</repository>
-
+    <repository>https://github.com/ConductionNL/SoftwareCatalogus</repository>
     <dependencies>
+        <nextcloud min-version="28" max-version="30"/>
         <php min-version="8.0" min-int-size="64"/>
         <database min-version="10">pgsql</database>
         <database>sqlite</database>
         <database min-version="8.0">mysql</database>
-        <owncloud max-version="0" min-version="0"/>
-        <nextcloud min-version="28" max-version="30"/>
     </dependencies>
-
     <navigations>
         <navigation>
             <id>softwarecatalog</id>
             <name>Software Catalogs</name>
             <route>softwarecatalog.dashboard.page</route>
+            <icon>app.svg</icon>
         </navigation>
     </navigations>
 </info>
