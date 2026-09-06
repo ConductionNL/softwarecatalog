@@ -65,7 +65,7 @@
     "node-polyfill-webpack-plugin": "4.1.0",
     "path-browserify": "^1.0.1",
     "pinia": "^3.0.3",
-    "sass": "^1.99.0",
+    "sass": "^1.104.0",
     "sass-loader": "^17.0.0",
     "style-loader": "~4.0.0",
     "terser-webpack-plugin": "^5.6.1",
