@@ -7,17 +7,15 @@
  * Exact-output assertions on every branch (ADR-025 i18n + multi-tenancy).
  */
 
-import { describe, it, expect, beforeEach } from 'vitest'
-
+import { beforeEach, describe, expect, it } from 'vitest'
 import {
+	buildObjectUrl,
+	buildWriteHeaders,
 	OR_API_BASE,
 	resolveLanguage,
 	withLanguageParam,
-	buildWriteHeaders,
-	buildObjectUrl,
 } from '../../src/composables/orClient.js'
-
-import { __setLanguage, __resetLanguage } from './stubs/nextcloud-l10n.js'
+import { __resetLanguage, __setLanguage } from './stubs/nextcloud-l10n.js'
 
 describe('OR_API_BASE', () => {
 	it('points at the OpenRegister object API root', () => {

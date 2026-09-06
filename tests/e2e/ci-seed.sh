@@ -131,7 +131,7 @@ required = {
     # place that names them outside the register JSON, and it is checked after
     # the import — which is what caught the rename here rather than in a spec.
     'schemas': [
-        'organization', 'contactPerson', 'module', 'contract',
+        'organization', 'contactPerson', 'module', 'catalogContract',
         'moduleVersion', 'vulnerability', 'compliancy', 'suite',
     ],
 }[kind]
@@ -149,8 +149,27 @@ if not slugs:
     print(f'::error::{kind} endpoint returned ZERO items — the query itself may be wrong.')
     print(raw[:500])
     sys.exit(1)
+
+# A PAGE IS NOT THE POPULATION. `total` is what the instance holds; `items` is
+# what this request returned. On a shared instance carrying several apps those
+# differ wildly — 1,997 schemas against a 1,000-row page — and a slug that
+# simply fell off the page reads exactly like a slug the import never created.
+# Refuse to judge rather than report a false absence.
+total = None
+if isinstance(body, dict):
+    for key in ('total', 'count'):
+        if isinstance(body.get(key), int):
+            total = body[key]
+            break
+if total is not None and total > len(items):
+    print(f'::error::{kind} listing is TRUNCATED: {len(items)} of {total} returned.')
+    print('::error::Raise the _limit on this request. A missing slug cannot be '
+          'distinguished from one that fell off the page, so this check is '
+          'refusing to report either.')
+    sys.exit(1)
+
 missing = [s for s in required if s not in slugs]
-print(f'[ci-seed] {kind} present ({len(slugs)}): {sorted(s for s in slugs if s)}')
+print(f'[ci-seed] {kind} present ({len(slugs)} of {total if total is not None else len(slugs)})')
 if missing:
     print(f'::error::Stackiq {kind} missing after import: {missing}')
     sys.exit(1)
@@ -160,12 +179,12 @@ PY
 
 REG_BODY="$(mktemp)"
 curl -sS -u "${USER_NAME}:${USER_PASS}" -H 'OCS-APIRequest: true' \
-	"${BASE}/index.php/apps/openregister/api/registers?_limit=300" -o "$REG_BODY"
+	"${BASE}/index.php/apps/openregister/api/registers?_limit=2000" -o "$REG_BODY"
 verify "$REG_BODY" registers
 
 SCH_BODY="$(mktemp)"
 curl -sS -u "${USER_NAME}:${USER_PASS}" -H 'OCS-APIRequest: true' \
-	"${BASE}/index.php/apps/openregister/api/schemas?_limit=1000" -o "$SCH_BODY"
+	"${BASE}/index.php/apps/openregister/api/schemas?_limit=10000" -o "$SCH_BODY"
 verify "$SCH_BODY" schemas
 
 # ── 3. Verify the APP-LEVEL mapping, not just OpenRegister ───────────────────

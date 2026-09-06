@@ -75,13 +75,10 @@
  * @e2e org-archimate-export::boolean-parameters-accept-various-truthy-values
  */
 
-import {
-	test,
-	expect,
-	request as playwrightRequest,
-	type Page,
-} from '@playwright/test'
-import { APP_PATH, resolveBaseUrl } from './base-url'
+import type { Page } from '@playwright/test'
+
+import { expect, request as playwrightRequest, test } from '@playwright/test'
+import { APP_PATH, resolveBaseUrl } from './base-url.ts'
 
 // ---------------------------------------------------------------------------
 // Fixture setup

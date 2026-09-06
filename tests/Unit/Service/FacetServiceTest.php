@@ -211,8 +211,8 @@ class FacetServiceTest extends TestCase {
 		$service = $this->makeService(objectService: $this->createMock(ObjectServiceInterface::class));
 
 		$this->expectException(\InvalidArgumentException::class);
-		$this->expectExceptionMessageMatches('/module.*service|service.*module/');
-		$service->getFacets(schema: 'contract');
+		$this->expectExceptionMessageMatches('/module.*catalogService|catalogService.*module/');
+		$service->getFacets(schema: 'catalogContract');
 
 	}//end testGetFacetsThrowsForUnsupportedSchema()
 
@@ -698,7 +698,7 @@ class FacetServiceTest extends TestCase {
 
 		$service = $this->makeService(objectService: $objectService, archiMateService: $archiMateService);
 
-		$result = $service->getFacets(schema: 'service');
+		$result = $service->getFacets(schema: 'catalogService');
 
 		$refCompByValue = array_column($result['referenceComponent'], 'count', 'value');
 		$this->assertSame(1, $refCompByValue['Zaakregistratiecomponent']);
@@ -753,7 +753,7 @@ class FacetServiceTest extends TestCase {
 
 		$service = $this->makeService(objectService: $objectService, archiMateService: $archiMateService);
 
-		$result = $service->getFacets(schema: 'service');
+		$result = $service->getFacets(schema: 'catalogService');
 
 		$refCompByValue = array_column($result['referenceComponent'], 'count', 'value');
 		$this->assertSame(1, $refCompByValue['Zaakregistratiecomponent']);

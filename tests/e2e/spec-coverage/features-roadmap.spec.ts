@@ -12,14 +12,14 @@
  * (src/main.js), the resolved manifest is what the router serves, so the
  * roadmap page renders its real content.
  */
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import {
-	gotoAppRoute,
+	APP_MAIN,
+	appNav,
 	collectAppErrors,
 	expectNoAppErrors,
-	appNav,
-	APP_MAIN,
-} from './_helpers'
+	gotoAppRoute,
+} from './_helpers.ts'
 
 test('features-roadmap: deep-link route mounts the roadmap surface', async ({
 	page,
@@ -34,7 +34,11 @@ test('features-roadmap: deep-link route mounts the roadmap surface', async ({
 		main.getByRole('heading', { name: 'Features', exact: true }).first(),
 	).toBeVisible({ timeout: 30000 })
 	await expect(
-		main.getByRole('button', { name: /Suggest feature/i }).first(),
+		// A LINK, not a button. nextcloud-vue 2.36.4 removed the in-product
+		// suggestion modal (team decision 2026-09-04: the forge is where the
+		// conversation happens), and the CTA is an anchor to the forge's
+		// feature-request issue form now. An `<a href>` has role `link`.
+		main.getByRole('link', { name: /Suggest feature/i }).first(),
 	).toBeVisible({ timeout: 30000 })
 	expectNoAppErrors(bag)
 })

@@ -18,14 +18,14 @@
  *
  * @spec openspec/specs/application-lifecycle-tracking/spec.md
  */
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import {
 	APP_MAIN,
 	collectAppErrors,
 	expectNoAppErrors,
 	navClickTo,
-} from './_helpers'
-import { LifecycleRoadmapView } from './page-components'
+} from './_helpers.ts'
+import { LifecycleRoadmapView } from './page-components.ts'
 
 // @e2e application-lifecycle-tracking::roadmap-groups-and-orders-the-portfolio
 test('roadmap: nav entry reaches the organisation-first roadmap surface', async ({

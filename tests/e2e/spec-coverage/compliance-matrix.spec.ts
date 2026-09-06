@@ -14,14 +14,14 @@
  * @spec openspec/specs/module-compliance-assessment/spec.md
  * @spec openspec/specs/bio-compliance-assessment/spec.md
  */
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import {
 	APP_MAIN,
 	collectAppErrors,
 	expectNoAppErrors,
 	navClickTo,
-} from './_helpers'
-import { ComplianceMatrixView } from './page-components'
+} from './_helpers.ts'
+import { ComplianceMatrixView } from './page-components.ts'
 
 // @e2e module-compliance-assessment::matrix-renders-the-three-cell-states
 // @e2e module-compliance-assessment::matrix-selection-is-shareable

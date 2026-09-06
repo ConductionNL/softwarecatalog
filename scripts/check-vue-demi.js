@@ -24,9 +24,9 @@
  * then hard-fail. Never silently continue.
  */
 
+const { spawnSync } = require('child_process')
 const fs = require('fs')
 const path = require('path')
-const { spawnSync } = require('child_process')
 
 const SHIM = path.resolve(
 	__dirname,

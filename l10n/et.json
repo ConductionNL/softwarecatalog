@@ -277,6 +277,11 @@
         "Stale": "Stale",
         "Subscribe to peer catalogs and pull their published entries into this instance.": "Subscribe to peer catalogs and pull their published entries into this instance.",
         "Subscribed peers": "Subscribed peers",
-        "There are no pending registrations right now.": "There are no pending registrations right now."
+        "There are no pending registrations right now.": "There are no pending registrations right now.",
+        "Reports": "Aruanded",
+        "Pick a report to open it.": "Valige aruanne, et see avada.",
+        "Overlapping and ageing software across the portfolio.": "Kattuv ja vananev tarkvara portfellis.",
+        "Store": "Pood",
+        "Install catalogue configurations that other organisations have published: a way of describing software, or the flows that keep an entry current.": "Paigalda registrid, skeemid ja voog, mille teised organisatsioonid on avaldanud."
     }
 }

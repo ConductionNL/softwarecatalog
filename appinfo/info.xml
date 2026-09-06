@@ -50,7 +50,7 @@ Vrij en open source onder de EUPL-licentie.
 
 **Ondersteuning:** Voor ondersteuning, neem contact op via support@conduction.nl. Voor een Service Level Agreement (SLA), neem contact op via sales@conduction.nl.
     ]]></description>
-    <version>0.1.148-unstable.20260830155811</version>
+    <version>0.1.152-unstable.20260901111016</version>
     <licence>EUPL-1.2</licence>
     <author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
     <namespace>Stackiq</namespace>
@@ -199,6 +199,14 @@ Vrij en open source onder de EUPL-licentie.
 				— an escaping exception in <install> aborts the install.
 			-->
 			<step>OCA\Stackiq\Repair\MigrateSchemaApplicationId</step>
+			<!--
+				Before InitializeSettings, and separate from RenameDutchSchemaSlugs
+				above: this one ends a CROSS-APP collision rather than translating a
+				word. `contract` was claimed by shillinq, pipelinq and this app, and
+				all three carry `contractNumber`, so shillinq owns the lifecycle and
+				this becomes the catalogue facet.
+			-->
+			<step>OCA\Stackiq\Repair\RenameCollidingSchemaSlugs</step>
 			<step>OCA\Stackiq\Repair\InitializeSettings</step>
 			<step>OCA\Stackiq\Repair\MigrateContactsToNc</step>
 			<step>OCA\Stackiq\Repair\BackfillContractApprovalState</step>
@@ -269,6 +277,14 @@ Vrij en open source onder de EUPL-licentie.
 			-->
 			<step>OCA\Stackiq\Repair\RenameDutchSchemaSlugs</step>
 			<step>OCA\Stackiq\Repair\MigrateSchemaApplicationId</step>
+			<!--
+				Before InitializeSettings, and separate from RenameDutchSchemaSlugs
+				above: this one ends a CROSS-APP collision rather than translating a
+				word. `contract` was claimed by shillinq, pipelinq and this app, and
+				all three carry `contractNumber`, so shillinq owns the lifecycle and
+				this becomes the catalogue facet.
+			-->
+			<step>OCA\Stackiq\Repair\RenameCollidingSchemaSlugs</step>
 			<step>OCA\Stackiq\Repair\InitializeSettings</step>
 		</install>
 	</repair-steps>

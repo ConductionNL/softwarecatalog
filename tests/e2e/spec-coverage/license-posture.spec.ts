@@ -22,14 +22,14 @@
  *
  * @spec openspec/specs/software-license-posture/spec.md
  */
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import {
 	APP_MAIN,
 	collectAppErrors,
 	expectNoAppErrors,
 	navClickTo,
-} from './_helpers'
-import { LicensePostureView } from './page-components'
+} from './_helpers.ts'
+import { LicensePostureView } from './page-components.ts'
 
 // @e2e software-license-posture::open-source-vs-closed-source-share-reflects-deployments-not-catalogue-rows
 test('license posture: nav reaches the dashboard; portfolio share renders', async ({

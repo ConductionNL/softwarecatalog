@@ -70,7 +70,7 @@ class ModerationController extends Controller {
 	/**
 	 * List the pending entries (of `type`) awaiting moderation.
 	 *
-	 * @param string $type The moderated object type ('organization', default, or 'assessment').
+	 * @param string $type The moderated object type ('organization', default, or 'software-review').
 	 *
 	 * @return JSONResponse `{ok, items}` or a 400.
 	 *
@@ -92,7 +92,7 @@ class ModerationController extends Controller {
 	 * Approve a pending entry (of `type`).
 	 *
 	 * @param string $uuid The entry uuid.
-	 * @param string $type The moderated object type ('organization', default, or 'assessment').
+	 * @param string $type The moderated object type ('organization', default, or 'software-review').
 	 *
 	 * @return JSONResponse `{ok, status}` or a 400.
 	 *
@@ -114,7 +114,7 @@ class ModerationController extends Controller {
 	 * Reject a pending entry (of `type`).
 	 *
 	 * @param string $uuid The entry uuid.
-	 * @param string $type The moderated object type ('organization', default, or 'assessment').
+	 * @param string $type The moderated object type ('organization', default, or 'software-review').
 	 *
 	 * @return JSONResponse `{ok, status}` or a 400.
 	 *

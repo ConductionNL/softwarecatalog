@@ -14,7 +14,7 @@
 /**
  * Build the `reviews/aggregate` query path for a subject.
  *
- * @param {string} subjectType - 'module' or 'service'.
+ * @param {string} subjectType - 'module' or 'catalogService'.
  * @param {string} subjectId   - The uuid of the module/dienst.
  * @return {string} The path (e.g. `reviews/aggregate?subjectType=module&subjectId=…`).
  * @spec openspec/specs/catalog-ratings/spec.md

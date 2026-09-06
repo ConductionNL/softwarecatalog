@@ -25,9 +25,9 @@
  * so opening Settings no longer logs "Failed to load users"; collectAppErrors no
  * longer filters that message, so this suite asserts it is genuinely absent.
  */
-import { test, expect } from '@playwright/test'
-import { collectAppErrors, expectNoAppErrors } from './_helpers'
-import { VersionInformation } from './page-components'
+import { expect, test } from '@playwright/test'
+import { collectAppErrors, expectNoAppErrors } from './_helpers.ts'
+import { VersionInformation } from './page-components.ts'
 
 /**
  * Open the app's Nextcloud admin settings section and return its host element.

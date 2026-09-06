@@ -7,10 +7,10 @@
  * @spec openspec/changes/open-data-publishing/specs/open-data-publishing/spec.md
  */
 
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
-	apiUrl,
 	apiRequest,
+	apiUrl,
 	normaliseFederationStatus,
 } from '../../src/utils/adminApi.js'
 

@@ -1,3 +1,7 @@
+import type { APIRequestContext } from '@playwright/test'
+import type { Page } from '@playwright/test'
+import type { VoorzieningenConfig } from '../workflows/_fixtures.ts'
+
 // SPDX-License-Identifier: EUPL-1.2
 // SPDX-FileCopyrightText: 2026 Conduction B.V.
 /**
@@ -8,7 +12,7 @@
  *                                               ModuleDetail (/modules/:id)
  *   src/modals/SubmitReviewModal.vue            "Write a review"
  *   src/views/settings/sections/ModerationQueue.vue
- *                                               reused for type="assessment"
+ *                                               reused for type="software-review"
  *                                               at /settings/admin/stackiq
  *   manifest page `Reviews` (/reviews)          the reviews index
  *
@@ -28,13 +32,16 @@
  *
  * @spec openspec/specs/catalog-ratings/spec.md
  */
+import { expect, request as playwrightRequest, test } from '@playwright/test'
 import {
-	test,
-	expect,
-	request as playwrightRequest,
-	type Page,
-} from '@playwright/test'
-import type { APIRequestContext } from '@playwright/test'
+	BASE_URL,
+	createObject,
+	deleteObject,
+	findAll,
+	newApiContext,
+	resolveConfig,
+	RUN_ID,
+} from '../workflows/_fixtures.ts'
 import {
 	APP_BASE,
 	APP_MAIN,
@@ -43,19 +50,8 @@ import {
 	dismissSupportDialog,
 	dismissWalkthrough,
 	expectNoAppErrors,
-	gotoAppRoute,
 	navClickTo,
-} from './_helpers'
-import {
-	BASE_URL,
-	RUN_ID,
-	createObject,
-	findAll,
-	newApiContext,
-	resolveConfig,
-	deleteObject,
-	type VoorzieningenConfig,
-} from '../workflows/_fixtures'
+} from './_helpers.ts'
 
 const MODULE_NAME = `Review subject ${RUN_ID}`
 /** Unique per test so the moderation queue row this test acts on is its own. */
@@ -79,7 +75,7 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
 	if (!ctx || !config) return
-	for (const schema of ['assessment', 'module']) {
+	for (const schema of ['software-review', 'module']) {
 		const rows = await findAll(ctx, config.register, schema)
 		for (const row of rows) {
 			if (JSON.stringify(row).includes(RUN_ID)) {
@@ -136,7 +132,7 @@ async function newAnonymousContext(): Promise<APIRequestContext> {
 
 /** Open the seeded module's detail page and wait for the reviews panel. */
 async function openModuleReviews(page: Page): Promise<void> {
-	await page.goto(`${APP_BASE}#/modules/${moduleUuid}`, {
+	await page.goto(`${APP_BASE.replace(/\/$/, '')}/modules/${moduleUuid}`, {
 		waitUntil: 'domcontentloaded',
 	})
 	await page
@@ -379,7 +375,7 @@ test('reviews: a module with no approved reviews shows the empty aggregate, not 
 	})
 	expect(uuid, 'isolated module fixture has no uuid').not.toBe('')
 
-	await page.goto(`${APP_BASE}#/modules/${uuid}`, {
+	await page.goto(`${APP_BASE.replace(/\/$/, '')}/modules/${uuid}`, {
 		waitUntil: 'domcontentloaded',
 	})
 	await page
@@ -538,7 +534,7 @@ test('reviews: an anonymous POST cannot create a review', async () => {
 	const rows = await findAll(
 		ctx,
 		config.register,
-		'assessment',
+		'software-review',
 		`Anon review ${RUN_ID}`,
 	)
 	expect(
@@ -570,7 +566,7 @@ test('reviews: a client-supplied auteur/status is stripped, not stored', async (
 		`POST /api/reviews returned ${res.status()}: ${await res.text()}`,
 	).toBeLessThan(300)
 
-	const rows = await findAll(ctx, config.register, 'assessment', reviewTitle)
+	const rows = await findAll(ctx, config.register, 'software-review', reviewTitle)
 	const stored = rows.find((r) => String(r.name ?? '') === reviewTitle)
 	expect(stored, 'the review was not persisted at all').toBeTruthy()
 	// The client-supplied author was IGNORED — the session identity won.

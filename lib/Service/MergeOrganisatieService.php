@@ -119,7 +119,7 @@ class MergeOrganisatieService {
 	 *
 	 * @var string[]
 	 */
-	private const SELF_ORGANISATION_RELATION_TYPES = ['contract', 'compliancy'];
+	private const SELF_ORGANISATION_RELATION_TYPES = ['catalogContract', 'compliancy'];
 
 	/**
 	 * MergeOrganisatieService constructor.

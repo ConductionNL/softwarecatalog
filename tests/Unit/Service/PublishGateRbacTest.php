@@ -107,7 +107,7 @@ class PublishGateRbacTest extends TestCase {
 	 * @return void
 	 */
 	public function testEveryPublishableSchemaHasTheGate(): void {
-		foreach (['service', 'module', 'connection', 'organization'] as $schema) {
+		foreach (['catalogService', 'module', 'connection', 'organization'] as $schema) {
 			$match = $this->publicPublishGate($schema);
 			$this->assertNotNull($match, $schema . ' must have a public publicatiedatum gate');
 			$this->assertSame('$now', $match['publicationDate']['$lte'], $schema . ' gate must be $lte $now');
@@ -121,7 +121,7 @@ class PublishGateRbacTest extends TestCase {
 	 * @return void
 	 */
 	public function testAnonReadVisibleOnlyWhenPublicatiedatumInThePast(): void {
-		foreach (['service', 'module', 'connection', 'organization'] as $schema) {
+		foreach (['catalogService', 'module', 'connection', 'organization'] as $schema) {
 			$match = $this->publicPublishGate($schema);
 			$this->assertNotNull($match);
 
@@ -153,7 +153,7 @@ class PublishGateRbacTest extends TestCase {
 	 * @return void
 	 */
 	public function testPublishGateFieldsPresent(): void {
-		foreach (['service', 'module', 'connection', 'organization'] as $schema) {
+		foreach (['catalogService', 'module', 'connection', 'organization'] as $schema) {
 			$props = $this->register['components']['schemas'][$schema]['properties'] ?? [];
 			$this->assertArrayHasKey('publicationDate', $props, $schema . ' needs publicatiedatum');
 			$this->assertArrayHasKey('depublicationDate', $props, $schema . ' needs depublicatiedatum');

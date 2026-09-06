@@ -143,7 +143,7 @@ export default {
 		 */
 		schema: {
 			type: String,
-			default: 'contract',
+			default: 'catalogContract',
 		},
 	},
 

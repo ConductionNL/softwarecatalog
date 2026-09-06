@@ -9,7 +9,7 @@
  * and the withHeartbeat convenience wrapper.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // The module instantiates a singleton + reads global OC.requestToken inside
 // sendHeartbeat(). We stub the globals and the fetch implementation before

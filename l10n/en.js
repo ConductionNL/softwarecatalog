@@ -3,6 +3,8 @@ OC.L10N.register(
     {
         "AMEF elements": "AMEF elements",
         "AMEF standards": "AMEF standards",
+        "ArchiMate element": "ArchiMate element",
+        "Id of the ArchiMate element this usage is shown on.": "Id of the ArchiMate element this usage is shown on.",
         "Acquisition start date": "Acquisition start date",
         "Algorithm": "Algorithm",
         "Application A": "Application A",
@@ -697,7 +699,12 @@ OC.L10N.register(
         "Invalid contactpersoon data structure": "Invalid contactpersoon data structure",
         "Where the automation lives": "Where the automation lives",
         "Flows are what happens without anyone clicking: a reminder before a deadline passes, a confirmation sent on submission. This is where you read and edit them. Nothing to build now.": "Flows are what happens without anyone clicking: a reminder before a deadline passes, a confirmation sent on submission. This is where you read and edit them. Nothing to build now.",
-        "Open Flows in the menu": "Open Flows in the menu"
+        "Open Flows in the menu": "Open Flows in the menu",
+        "Reports": "Reports",
+        "Pick a report to open it.": "Pick a report to open it.",
+        "Overlapping and ageing software across the portfolio.": "Overlapping and ageing software across the portfolio.",
+        "xmlns": "xmlns",
+        "xsi": "xsi"
     },
     "nplurals=2; plural=(n != 1);"
 )

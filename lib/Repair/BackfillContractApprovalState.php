@@ -93,7 +93,7 @@ class BackfillContractApprovalState implements IRepairStep {
 		}
 
 		$registerId = $this->settingsService->getVoorzieningenRegisterId();
-		$schemaId = $this->settingsService->getSchemaIdForObjectType('contract');
+		$schemaId = $this->settingsService->getSchemaIdForObjectType('catalogContract');
 		if ($registerId === null || $schemaId === null) {
 			$output->info('Contract register/schema not configured — skipping approvalState backfill');
 			$output->advance(1);

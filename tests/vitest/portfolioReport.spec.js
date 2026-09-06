@@ -11,14 +11,14 @@
  * @spec openspec/changes/portfolio-rationalization-time/specs/portfolio-rationalization-time/spec.md
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
-	QUADRANT_ORDER,
-	quadrantColor,
+	buildCsvExportUrl,
 	cloudTransitionLabel,
 	formatCurrency,
 	groupRowsByQuadrant,
-	buildCsvExportUrl,
+	QUADRANT_ORDER,
+	quadrantColor,
 } from '../../src/utils/portfolioReport.js'
 
 describe('QUADRANT_ORDER', () => {

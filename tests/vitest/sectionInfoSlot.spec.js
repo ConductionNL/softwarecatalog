@@ -35,9 +35,8 @@
  * @spec openspec/specs/fe-shell-navigation/spec.md
  */
 
-import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-
+import { describe, expect, it } from 'vitest'
 import AlwaysVisibleSection from '../../src/components/AlwaysVisibleSection.vue'
 import CollapsibleSection from '../../src/components/CollapsibleSection.vue'
 

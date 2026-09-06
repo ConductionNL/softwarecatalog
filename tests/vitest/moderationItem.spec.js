@@ -4,10 +4,10 @@
  * @spec openspec/changes/open-data-publishing/specs/open-data-publishing/spec.md
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
-	moderationItemTitle,
 	moderationItemSubtitle,
+	moderationItemTitle,
 } from '../../src/utils/moderationItem.js'
 
 describe('moderationItemTitle', () => {
@@ -25,7 +25,11 @@ describe('moderationItemTitle', () => {
 	})
 
 	it('ignores blank/whitespace title fields', () => {
-		expect(moderationItemTitle({ name: '   ', name: 'Real' })).toBe('Real')
+		// A blank `name` must fall THROUGH to the next title field. The old
+		// assertion passed `{ name: '   ', name: 'Real' }`, where the second
+		// key silently overwrites the first, so the object it actually built
+		// was `{ name: 'Real' }` and the blank branch was never taken.
+		expect(moderationItemTitle({ name: '   ', title: 'Real' })).toBe('Real')
 	})
 })
 

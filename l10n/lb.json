@@ -277,6 +277,11 @@
         "Stale": "Stale",
         "Subscribe to peer catalogs and pull their published entries into this instance.": "Subscribe to peer catalogs and pull their published entries into this instance.",
         "Subscribed peers": "Subscribed peers",
-        "There are no pending registrations right now.": "There are no pending registrations right now."
+        "There are no pending registrations right now.": "There are no pending registrations right now.",
+        "Reports": "Berichter",
+        "Pick a report to open it.": "Wielt e Bericht fir hien opzemaachen.",
+        "Overlapping and ageing software across the portfolio.": "Iwwerlappend an al Software am Portfolio.",
+        "Store": "Buttek",
+        "Install catalogue configurations that other organisations have published: a way of describing software, or the flows that keep an entry current.": "Installéiert Registeren, Schemaen a Flows déi aner Organisatiounen publizéiert hunn."
     }
 }

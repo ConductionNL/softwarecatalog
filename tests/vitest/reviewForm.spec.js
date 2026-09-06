@@ -9,12 +9,12 @@
  * @spec openspec/specs/catalog-ratings/spec.md#requirement-the-submitting-users-identity-must-be-bound-server-side-and-must-not-be-accepted-from-client-input
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
-	ratingOptions,
-	isReviewFormValid,
 	buildReviewPayload,
 	buildReviewSubmission,
+	isReviewFormValid,
+	ratingOptions,
 } from '../../src/utils/reviewForm.js'
 
 describe('reviewForm.ratingOptions', () => {
@@ -84,10 +84,10 @@ describe('reviewForm.buildReviewSubmission', () => {
 			'Great service',
 			6,
 			'',
-			'service',
+			'catalogService',
 			'dienst-uuid-1',
 		)
-		expect(body.subjectType).toBe('service')
+		expect(body.subjectType).toBe('catalogService')
 		expect(body.subjectId).toBe('dienst-uuid-1')
 	})
 })

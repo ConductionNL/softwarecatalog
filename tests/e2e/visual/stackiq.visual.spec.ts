@@ -13,16 +13,16 @@
 // (the bare /apps/stackiq/ route 404s), so navigation targets the
 // /index entrypoint.
 import { test } from '@playwright/test'
-import { shootSurface, shootByNav } from './_visual-helpers'
+import { shootByNav, shootSurface } from './_visual-helpers.ts'
 
 const APP = '/index.php/apps/stackiq/index'
 
 test.describe('Stackiq — visual baselines', () => {
 	test('dashboard', async ({ page }) => {
-		await shootSurface(page, `${APP}#/`, 'dashboard.png')
+		await shootSurface(page, `${APP}/`, 'dashboard.png')
 	})
 
 	test('organisations list', async ({ page }) => {
-		await shootByNav(page, `${APP}#/`, 'Organisations', 'organisations.png')
+		await shootByNav(page, `${APP}/`, 'Organisations', 'organisations.png')
 	})
 })

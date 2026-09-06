@@ -61,10 +61,10 @@ class ContractRbacTest extends TestCase {
 
 		$config = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
 
-		$this->assertArrayHasKey('contract', $config['components']['schemas']);
-		$this->assertArrayHasKey('authorization', $config['components']['schemas']['contract']);
+		$this->assertArrayHasKey('catalogContract', $config['components']['schemas']);
+		$this->assertArrayHasKey('authorization', $config['components']['schemas']['catalogContract']);
 
-		return $config['components']['schemas']['contract']['authorization'];
+		return $config['components']['schemas']['catalogContract']['authorization'];
 	}//end loadContractAuthorization()
 
 	/**

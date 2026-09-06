@@ -179,7 +179,7 @@ export default {
 		schema: {
 			type: String,
 			required: true,
-			validator: (value) => ['module', 'service'].includes(value),
+			validator: (value) => ['module', 'catalogService'].includes(value),
 		},
 
 		/** OpenRegister register id/slug (resolved from the manifest's `@resolve:voorzieningen_register`). */

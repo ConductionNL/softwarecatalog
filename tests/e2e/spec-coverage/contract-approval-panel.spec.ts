@@ -14,14 +14,14 @@
  *
  * @spec openspec/changes/stackiq-contracts-to-decidesk/specs/contract-decision-delegation/spec.md
  */
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import {
 	APP_MAIN,
 	collectAppErrors,
 	expectNoAppErrors,
 	gotoAppRoute,
 	navClickTo,
-} from './_helpers'
+} from './_helpers.ts'
 
 // @e2e contract-decision-delegation::approval-panel-shows-projected-state-and-submit-action
 // @e2e contract-decision-delegation::approval-action-hidden-when-delegation-is-not-configured

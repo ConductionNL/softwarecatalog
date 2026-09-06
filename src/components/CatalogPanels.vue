@@ -1,153 +1,128 @@
 <template>
-	<CnDashboardPage
-		title="Dashboard"
-		description="Overzicht van uw softwarecatalogus en configuraties"
-		:widgets="widgetDefs"
-		:layout="dashboardLayout"
-		:loading="loading">
-		<template #header-actions>
-			<NcButton variant="secondary" @click="refreshAllData">
-				<template #icon>
-					<NcLoadingIcon v-if="loading" :size="20" />
-					<Refresh v-else :size="20" />
-				</template>
-				Vernieuwen
-			</NcButton>
-		</template>
-
-		<!-- Beheer info box widget -->
-		<template #widget-info-box>
-			<NcNoteCard type="info" class="infoBox">
-				<div class="infoBoxContent">
-					<h3 class="infoBoxTitle">Beheer van Organisaties</h3>
-					<p class="infoBoxText">
-						Organisaties kunnen worden geaccepteerd en beheerd via de
-						organisaties pagina. Het aanmaken en bewerken van gebruikers
-						gaat ook via de organisatie pagina, omdat deze onderdeel zijn
-						van organisaties.
-					</p>
-					<div class="infoBoxActions">
-						<NcButton variant="primary" @click="navigateToOrganizations">
-							<template #icon>
-								<OfficeBuildingOutline :size="16" />
-							</template>
-							Ga naar Organisaties
-						</NcButton>
-					</div>
+	<div class="catalogPanels">
+		<NcNoteCard type="info" class="infoBox">
+			<div class="infoBoxContent">
+				<h3 class="infoBoxTitle">Beheer van Organisaties</h3>
+				<p class="infoBoxText">
+					Organisaties kunnen worden geaccepteerd en beheerd via de
+					organisaties pagina. Het aanmaken en bewerken van gebruikers gaat
+					ook via de organisatie pagina, omdat deze onderdeel zijn van
+					organisaties.
+				</p>
+				<div class="infoBoxActions">
+					<NcButton variant="primary" @click="navigateToOrganizations">
+						<template #icon>
+							<OfficeBuildingOutline :size="16" />
+						</template>
+						Ga naar Organisaties
+					</NcButton>
 				</div>
-			</NcNoteCard>
-		</template>
+			</div>
+		</NcNoteCard>
 
-		<!-- Statistics table 1 widget -->
-		<template #widget-stats-table-1>
-			<div class="statisticsTableContainer">
-				<div class="statisticsTableHeader">
-					<span class="lastUpdated"
-						>Laatst bijgewerkt: {{ formatDate(new Date()) }}</span
-					>
-				</div>
+		<div class="statisticsTableContainer">
+			<div class="statisticsTableHeader">
+				<span class="lastUpdated"
+					>Laatst bijgewerkt: {{ formatDate(new Date()) }}</span
+				>
+			</div>
 
-				<table class="objectStatisticsTable">
-					<thead>
-						<tr>
-							<th scope="col">Object Type</th>
-							<th scope="col" class="countHeader">Count</th>
-							<th scope="col" class="manageHeader">Manage</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr
-							v-for="stat in firstTableStats"
-							:key="stat.objectType"
-							style="cursor: pointer"
-							@click="navigateToSchema(stat.slug)">
-							<td>{{ stat.objectType }}</td>
-							<td class="countCell">
-								{{ stat.count.toLocaleString() }}
-							</td>
-							<td class="manageCell">
-								<NcButton
-									v-if="stat.slug === 'organization'"
-									size="small"
-									variant="tertiary"
-									@click.stop="navigateToObjectType(stat.slug)">
-									<template #icon>
-										<component
-											:is="getIconForObjectType(stat.slug)"
-											:size="16" />
-									</template>
-									Manage
-								</NcButton>
-								<span v-else class="disabledManage">
+			<table class="objectStatisticsTable">
+				<thead>
+					<tr>
+						<th scope="col">Object Type</th>
+						<th scope="col" class="countHeader">Count</th>
+						<th scope="col" class="manageHeader">Manage</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr
+						v-for="stat in firstTableStats"
+						:key="stat.objectType"
+						style="cursor: pointer"
+						@click="navigateToSchema(stat.slug)">
+						<td>{{ stat.objectType }}</td>
+						<td class="countCell">
+							{{ stat.count.toLocaleString() }}
+						</td>
+						<td class="manageCell">
+							<NcButton
+								v-if="stat.slug === 'organization'"
+								size="small"
+								variant="tertiary"
+								@click.stop="navigateToObjectType(stat.slug)">
+								<template #icon>
 									<component
 										:is="getIconForObjectType(stat.slug)"
 										:size="16" />
-									<span class="strikethrough">Manage</span>
-								</span>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+								</template>
+								Manage
+							</NcButton>
+							<span v-else class="disabledManage">
+								<component
+									:is="getIconForObjectType(stat.slug)"
+									:size="16" />
+								<span class="strikethrough">Manage</span>
+							</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="statisticsTableContainer">
+			<div class="statisticsTableHeader">
+				<span class="lastUpdated"
+					>Laatst bijgewerkt: {{ formatDate(new Date()) }}</span
+				>
 			</div>
-		</template>
 
-		<!-- Statistics table 2 widget -->
-		<template #widget-stats-table-2>
-			<div class="statisticsTableContainer">
-				<div class="statisticsTableHeader">
-					<span class="lastUpdated"
-						>Laatst bijgewerkt: {{ formatDate(new Date()) }}</span
-					>
-				</div>
-
-				<table class="objectStatisticsTable">
-					<thead>
-						<tr>
-							<th scope="col">Object Type</th>
-							<th scope="col" class="countHeader">Count</th>
-							<th scope="col" class="manageHeader">Manage</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr
-							v-for="stat in secondTableStats"
-							:key="stat.objectType"
-							style="cursor: pointer"
-							@click="navigateToSchema(stat.slug)">
-							<td>{{ stat.objectType }}</td>
-							<td class="countCell">
-								{{ stat.count.toLocaleString() }}
-							</td>
-							<td class="manageCell">
-								<NcButton
-									v-if="stat.slug === 'organization'"
-									size="small"
-									variant="tertiary"
-									@click.stop="navigateToObjectType(stat.slug)">
-									<template #icon>
-										<component
-											:is="getIconForObjectType(stat.slug)"
-											:size="16" />
-									</template>
-									Manage
-								</NcButton>
-								<span v-else class="disabledManage">
+			<table class="objectStatisticsTable">
+				<thead>
+					<tr>
+						<th scope="col">Object Type</th>
+						<th scope="col" class="countHeader">Count</th>
+						<th scope="col" class="manageHeader">Manage</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr
+						v-for="stat in secondTableStats"
+						:key="stat.objectType"
+						style="cursor: pointer"
+						@click="navigateToSchema(stat.slug)">
+						<td>{{ stat.objectType }}</td>
+						<td class="countCell">
+							{{ stat.count.toLocaleString() }}
+						</td>
+						<td class="manageCell">
+							<NcButton
+								v-if="stat.slug === 'organization'"
+								size="small"
+								variant="tertiary"
+								@click.stop="navigateToObjectType(stat.slug)">
+								<template #icon>
 									<component
 										:is="getIconForObjectType(stat.slug)"
 										:size="16" />
-									<span class="strikethrough">Manage</span>
-								</span>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</template>
-	</CnDashboardPage>
+								</template>
+								Manage
+							</NcButton>
+							<span v-else class="disabledManage">
+								<component
+									:is="getIconForObjectType(stat.slug)"
+									:size="16" />
+								<span class="strikethrough">Manage</span>
+							</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </template>
 
 <script>
-import { CnDashboardPage } from '@conduction/nextcloud-vue'
 import { NcButton, NcLoadingIcon, NcNoteCard } from '@nextcloud/vue'
 import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import ApplicationCog from 'vue-material-design-icons/ApplicationCog.vue'
@@ -170,12 +145,12 @@ import { navigationStore, objectStore } from '../store/store.js'
  * @see https://github.com/OpenCatalogi/opencatalogi
  *
  * Dashboard view showing overview statistics and configuration status.
- * Uses CnDashboardPage for standard widget-based layout.
+ * Rendered as the `catalog-panels` dashboard widget; the KPI tiles beside it
+ * are declarative `stat` widgets in the manifest.
  */
 export default {
-	name: 'Dashboard',
+	name: 'CatalogPanels',
 	components: {
-		CnDashboardPage,
 		NcButton,
 		NcLoadingIcon,
 		NcNoteCard,
@@ -192,50 +167,10 @@ export default {
 	data() {
 		return {
 			loading: true,
-			dashboardLayout: [
-				{
-					id: 1,
-					widgetId: 'info-box',
-					gridX: 0,
-					gridY: 0,
-					gridWidth: 12,
-					showTitle: false,
-				},
-				{
-					id: 2,
-					widgetId: 'stats-table-1',
-					gridX: 0,
-					gridY: 1,
-					gridWidth: 6,
-					showTitle: false,
-				},
-				{
-					id: 3,
-					widgetId: 'stats-table-2',
-					gridX: 6,
-					gridY: 1,
-					gridWidth: 6,
-					showTitle: false,
-				},
-			],
 		}
 	},
 
 	computed: {
-		/**
-		 * Widget definitions for CnDashboardPage
-		 *
-		 * @return {Array} Widget definition array
-		 * @spec openspec/specs/fe-shell-navigation/spec.md
-		 */
-		widgetDefs() {
-			return [
-				{ id: 'info-box', title: 'Beheer Informatie' },
-				{ id: 'stats-table-1', title: 'Object Statistieken (1)' },
-				{ id: 'stats-table-2', title: 'Object Statistieken (2)' },
-			]
-		},
-
 		/**
 		 * Get object statistics for the table display
 		 *
@@ -451,11 +386,12 @@ export default {
 		/**
 		 * Navigate to configuration page - opens admin settings in new tab
 		 *
-		 * @param {string} route - Route to navigate to (legacy parameter)
+		 * @param {string} _route - Ignored; the destination is the fixed admin
+		 *   settings URL below. Kept so existing call sites still type-check.
 		 * @return {void}
 		 * @spec openspec/specs/fe-shell-navigation/spec.md
 		 */
-		navigateToConfiguration(route) {
+		navigateToConfiguration(_route) {
 			const settingsUrl = `${window.location.protocol}//${window.location.host}/index.php/settings/admin/stackiq`
 			window.open(settingsUrl, '_blank')
 		},

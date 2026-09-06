@@ -117,7 +117,7 @@ class PortalContributionProviderTest extends TestCase {
 			array_keys($byId)
 		);
 
-		$this->assertSame('service', $byId['vendorDiensten']['schema']);
+		$this->assertSame('catalogService', $byId['vendorDiensten']['schema']);
 		$this->assertSame('provider', $byId['vendorDiensten']['scopeField']);
 		$this->assertSame('organisationId', $byId['vendorDiensten']['scopeClaim']);
 		$this->assertArrayNotHasKey('via', $byId['vendorDiensten']);

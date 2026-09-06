@@ -1,3 +1,6 @@
+import type { APIRequestContext, Page } from '@playwright/test'
+import type { VoorzieningenConfig } from './_fixtures.ts'
+
 // SPDX-License-Identifier: EUPL-1.2
 // SPDX-FileCopyrightText: 2026 Conduction B.V.
 /**
@@ -32,17 +35,16 @@
  *   AMEF XML body — it activates automatically once the AMEF register is
  *   configured.
  */
-import { test, expect, type APIRequestContext, type Page } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import {
-	newApiContext,
-	resolveConfig,
 	createObject,
 	deleteObject,
 	findAll,
 	nameOf,
+	newApiContext,
+	resolveConfig,
 	RUN_ID,
-	type VoorzieningenConfig,
-} from './_fixtures'
+} from './_fixtures.ts'
 
 let apiCtx: APIRequestContext
 let cfg: VoorzieningenConfig

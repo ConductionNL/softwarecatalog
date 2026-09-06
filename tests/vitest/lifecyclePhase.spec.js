@@ -7,13 +7,13 @@
  * @spec openspec/changes/application-lifecycle-tracking/specs/application-lifecycle-tracking/spec.md
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
-	PHASE,
-	parseDate,
 	derivePhase,
 	endOfSupportState,
 	isEolApproaching,
+	parseDate,
+	PHASE,
 	phaseOrder,
 	resolveUuid,
 } from '../../src/utils/lifecyclePhase.js'

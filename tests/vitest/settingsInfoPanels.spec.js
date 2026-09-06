@@ -41,11 +41,11 @@
  * @spec openspec/specs/fe-shell-navigation/spec.md
  */
 
-import { describe, it, expect } from 'vitest'
-import { readFileSync, readdirSync } from 'fs'
-import path from 'path'
-import { parse } from '@vue/compiler-sfc'
 import { compile } from '@vue/compiler-dom'
+import { parse } from '@vue/compiler-sfc'
+import { readdirSync, readFileSync } from 'fs'
+import path from 'path'
+import { describe, expect, it } from 'vitest'
 import * as VueRuntime from 'vue'
 import { createApp } from 'vue'
 
@@ -106,7 +106,7 @@ function renderFragment(markup) {
 		hoistStatic: false,
 		prefixIdentifiers: true,
 	})
-	// eslint-disable-next-line no-new-func
+
 	const render = new Function('Vue', code)(VueRuntime)
 
 	const host = document.createElement('div')

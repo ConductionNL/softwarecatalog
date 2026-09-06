@@ -11,17 +11,17 @@
  * @spec openspec/specs/bio-compliance-assessment/spec.md
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
-	CELL,
-	COLUMN_SOURCE,
-	resolveUuid,
-	hasEvidence,
-	partitionCompliancy,
 	buildComplianceMatrix,
 	buildOrganisationCoverage,
-	standardLabel,
+	CELL,
+	COLUMN_SOURCE,
 	columnLabel,
+	hasEvidence,
+	partitionCompliancy,
+	resolveUuid,
+	standardLabel,
 } from '../../src/utils/complianceMatrix.js'
 
 describe('complianceMatrix.resolveUuid', () => {

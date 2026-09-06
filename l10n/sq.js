@@ -278,7 +278,12 @@ OC.L10N.register(
         "Stale": "Stale",
         "Subscribe to peer catalogs and pull their published entries into this instance.": "Subscribe to peer catalogs and pull their published entries into this instance.",
         "Subscribed peers": "Subscribed peers",
-        "There are no pending registrations right now.": "There are no pending registrations right now."
+        "There are no pending registrations right now.": "There are no pending registrations right now.",
+        "Reports": "Raportet",
+        "Pick a report to open it.": "Zgjidhni një raport për të hapur.",
+        "Overlapping and ageing software across the portfolio.": "Softuer i mbivendosur dhe i vjetruar në portofol.",
+        "Store": "Dyqani",
+        "Install catalogue configurations that other organisations have published: a way of describing software, or the flows that keep an entry current.": "Instaloni regjistra, skema dhe rrjedha të publikuara nga organizata të tjera."
     },
     "nplurals=2; plural=(n != 1);"
 )

@@ -1,5 +1,13 @@
 {
     "translations": {
+        "Load example data?": "Voorbeeldgegevens laden?",
+        "Example data fills the lists, detail pages and dashboards so you can see the app working straight away. Pick \"None\" on a production install.": "Voorbeeldgegevens vullen de lijsten, detailpagina’s en dashboards, zodat je de app meteen ziet werken. Kies \"Geen\" op een productieomgeving.",
+        "Load the example data": "Laad de voorbeeldgegevens",
+        "Loads what you picked. The data is obviously sample data, it is safe to run more than once, and you can delete it afterwards.": "Laadt wat je koos. De gegevens zijn herkenbaar voorbeeldgegevens, je kunt dit meer dan een keer uitvoeren en je kunt ze daarna verwijderen.",
+        "None, I will set this up myself": "Geen, ik richt dit zelf in",
+        "Nothing is imported. You start with an empty app and add your own data.": "Er wordt niets geïmporteerd. Je begint met een lege app en voegt zelf gegevens toe.",
+        "Example data": "Voorbeeldgegevens",
+        "Sample values for every schema this app supplies, generated from the schemas themselves. It shows the lists, detail pages and dashboards working rather than telling a story. Safe to run more than once, and you can delete it afterwards.": "Voorbeeldwaarden voor elk schema dat deze app levert, gegenereerd uit de schema’s zelf. Het laat de lijsten, detailpagina’s en dashboards werkend zien in plaats van een verhaal te vertellen. Veilig om vaker uit te voeren, en je kunt het daarna verwijderen.",
         "Welcome": "Welkom",
         "A short setup to get this app ready. Nothing here is required; you can close it and come back later.": "Een korte installatie om deze app klaar te zetten. Niets hiervan is verplicht; je kunt dit sluiten en later terugkomen.",
         "Demo data (optional)": "Demovoorbeelddata (optioneel)",
@@ -7,6 +15,8 @@
         "All set": "Klaar",
         "AMEF elements": "Amef elementen",
         "AMEF standards": "Standaarden AMEF",
+        "ArchiMate element": "ArchiMate-element",
+        "Id of the ArchiMate element this usage is shown on.": "Id van het ArchiMate-element waarop dit gebruik wordt getoond.",
         "Acquisition start date": "Startdatum Verwerving",
         "Algorithm": "Algoritme",
         "Application A": "Applicatie A",
@@ -757,6 +767,15 @@
         "Flow": "Flow",
         "Where the automation lives": "Waar de automatisering zit",
         "Flows are what happens without anyone clicking: a reminder before a deadline passes, a confirmation sent on submission. This is where you read and edit them. Nothing to build now.": "Flows zijn wat er gebeurt zonder dat iemand klikt: een herinnering voordat een termijn verstrijkt, een bevestiging bij indiening. Hier lees en bewerk je ze. Je hoeft nu niets te bouwen.",
-        "Open Flows in the menu": "Open Flows in het menu"
+        "Open Flows in the menu": "Open Flows in het menu",
+        "Modules": "Modules",
+        "Object statistics": "Object statistieken",
+        "Reports": "Rapporten",
+        "Pick a report to open it.": "Kies een rapport om het te openen.",
+        "Overlapping and ageing software across the portfolio.": "Overlappende en verouderde software in de portfolio.",
+        "Store": "Store",
+        "Install catalogue configurations that other organisations have published: a way of describing software, or the flows that keep an entry current.": "Installeer registers, schema's en flows die andere organisaties hebben gepubliceerd.",
+        "xmlns": "xmlns",
+        "xsi": "xsi"
     }
 }

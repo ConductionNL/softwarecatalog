@@ -4,13 +4,13 @@
  * @spec openspec/changes/contract-administration/specs/contract-administration/spec.md
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
-	PERIOD,
-	parseAmount,
 	annualisedCost,
-	totalAnnualisedCost,
 	isOneOff,
+	parseAmount,
+	PERIOD,
+	totalAnnualisedCost,
 } from '../../src/utils/contractCost.js'
 
 describe('contractCost.parseAmount', () => {

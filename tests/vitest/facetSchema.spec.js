@@ -17,10 +17,10 @@
  * reads the package's own registry.
  */
 
-import { describe, it, expect } from 'vitest'
-import { buildFacetDimensionSchema } from '../../src/utils/facetSchema.js'
+import { describe, expect, it } from 'vitest'
 // The REAL implementation from the installed package — not a local restatement.
 import { filtersFromSchema } from '../../node_modules/@conduction/nextcloud-vue/src/utils/schema.js'
+import { buildFacetDimensionSchema } from '../../src/utils/facetSchema.js'
 
 /** The four GEMMA dimensions FacetedCatalogIndexView declares. */
 const DIMENSION_LABELS = {

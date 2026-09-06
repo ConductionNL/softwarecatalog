@@ -74,7 +74,7 @@ export function buildReviewPayload(naam, rating, beschrijvingLang) {
  * @param {string} naam             - The review title.
  * @param {number} rating           - The selected rating (1-10).
  * @param {string} beschrijvingLang - The testimonial text.
- * @param {string} subjectType      - 'module' or 'service'.
+ * @param {string} subjectType      - 'module' or 'catalogService'.
  * @param {string} subjectId        - The uuid of the module/dienst.
  * @return {{review:object, subjectType:string, subjectId:string}} The request body.
  * @spec openspec/specs/catalog-ratings/spec.md

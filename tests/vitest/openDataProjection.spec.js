@@ -4,11 +4,11 @@
  * @spec openspec/changes/open-data-publishing/specs/open-data-publishing/spec.md
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
-	projectOpenData,
-	isClean,
 	DEFAULT_LICENSE,
+	isClean,
+	projectOpenData,
 } from '../../src/utils/openDataProjection.js'
 
 describe('openDataProjection.projectOpenData', () => {

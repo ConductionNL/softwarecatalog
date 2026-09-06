@@ -13,13 +13,13 @@
  *
  * @spec openspec/specs/contract-administration/spec.md
  */
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import {
 	APP_MAIN,
 	collectAppErrors,
 	expectNoAppErrors,
 	navClickTo,
-} from './_helpers'
+} from './_helpers.ts'
 
 // @e2e contract-administration::index-columns-render-real-data
 // @e2e contract-administration::expiring-soon-filter-shows-only-contracts-in-the-window

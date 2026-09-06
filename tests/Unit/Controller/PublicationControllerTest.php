@@ -154,7 +154,7 @@ class PublicationControllerTest extends TestCase {
 
 		$this->publicationService->expects($this->once())
 			->method('publish')
-			->with('service', 'uuid-9', '2026-09-01T00:00:00+00:00')
+			->with('catalogService', 'uuid-9', '2026-09-01T00:00:00+00:00')
 			->willReturn(
 				[
 					'ok' => true,
@@ -164,7 +164,7 @@ class PublicationControllerTest extends TestCase {
 			);
 
 		$response = $this->controller()->publish(
-			objectType: 'service',
+			objectType: 'catalogService',
 			uuid: 'uuid-9',
 			when: '2026-09-01T00:00:00+00:00'
 		);
@@ -190,7 +190,7 @@ class PublicationControllerTest extends TestCase {
 
 		$this->publicationService->expects($this->never())->method('publish');
 
-		$response = $this->controller()->publish(objectType: 'service', uuid: 'uuid-9');
+		$response = $this->controller()->publish(objectType: 'catalogService', uuid: 'uuid-9');
 
 		$this->assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
 
@@ -211,7 +211,7 @@ class PublicationControllerTest extends TestCase {
 
 		$this->publicationService->expects($this->never())->method('publish');
 
-		$response = $this->controller()->publish(objectType: 'service', uuid: 'uuid-9');
+		$response = $this->controller()->publish(objectType: 'catalogService', uuid: 'uuid-9');
 
 		$this->assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
 

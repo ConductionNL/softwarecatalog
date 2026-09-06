@@ -27,15 +27,15 @@
  * blob. See the block above the standards test for why repointing the page was
  * the right fix and attaching the schema to the catalog register was not.
  */
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import {
-	navClickTo,
-	gotoAppRoute,
-	collectAppErrors,
-	expectNoAppErrors,
-	expectIndexSurface,
 	APP_MAIN,
-} from './_helpers'
+	collectAppErrors,
+	expectIndexSurface,
+	expectNoAppErrors,
+	gotoAppRoute,
+	navClickTo,
+} from './_helpers.ts'
 
 interface IndexPage {
 	/** Exact app-navigation link label. */
