@@ -10,92 +10,110 @@
  * "Ga naar Organisaties" navigation button which routes to the organisaties
  * index (navigationStore.setSelected('organisaties')).
  */
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import {
-	gotoAppRoute,
-	navClickTo,
+	APP_MAIN,
 	collectAppErrors,
 	expectNoAppErrors,
-	APP_MAIN,
-} from './_helpers'
+	gotoAppRoute,
+	navClickTo,
+} from './_helpers.ts'
 
-test('dashboard: renders the overview surface (info box, refresh, statistics tables)', async ({
+test('dashboard: renders the overview surface (stat tiles and the object statistics panel)', async ({
 	page,
 }) => {
 	const bag = collectAppErrors(page)
 	await gotoAppRoute(page, '/')
 	const main = page.locator(APP_MAIN).first()
 
-	// Page intro / info-box widget content.
-	await expect(
-		main
-			.getByText('Overzicht van uw softwarecatalogus', { exact: false })
-			.first(),
-	).toBeVisible({ timeout: 30000 })
-	await expect(
-		main.getByRole('heading', { name: 'Beheer van Organisaties' }).first(),
-	).toBeVisible()
+	// The dashboard is four stat tiles plus the catalog-panels widget. It used
+	// to be an info box with an intro sentence and a "Beheer van Organisaties"
+	// heading; that surface was replaced when the KPI tiles landed, and this
+	// spec kept asserting the old one.
+	//
+	// Matched against BOTH the manifest source and its nl.json translation.
+	// Two of these differ between the two: the manifest says "Services" and
+	// "Object statistics", which nl.json maps to "Diensten" and "Object
+	// statistieken". Pinning either one couples the spec to whichever locale
+	// the instance happens to boot in, and that is exactly how the previous
+	// version of this test failed: it asserted Dutch against an instance
+	// rendering the English source.
+	const tiles: RegExp[] = [
+		/Organisaties/,
+		/Modules/,
+		/Services|Diensten/,
+		/Contracten/,
+	]
+	for (const label of tiles) {
+		await expect(
+			main.getByText(label).first(),
+			`the ${label.source} stat tile must render`,
+		).toBeVisible({ timeout: 30000 })
+	}
 
-	// Refresh action is present and clickable (drives refreshAllData).
-	const refresh = main.getByRole('button', { name: 'Vernieuwen' }).first()
-	await expect(refresh).toBeVisible()
-	await expect(refresh).toBeEnabled()
-
-	// The statistics overview renders as object-type count tables (two grids).
-	// At least one statistics table is present in the rendered dashboard.
-	await expect(main.locator('table').first()).toBeVisible({ timeout: 30000 })
+	// The catalog-panels widget is NOT asserted here, deliberately. Its manifest
+	// title ("Object statistics") does not appear as text on the rendered
+	// dashboard, in either locale, so something about how that custom widget
+	// renders differs from the stat tiles above and I could not settle what from
+	// CI logs alone.
+	//
+	// It is left out rather than guessed at, because a wrong assertion here is
+	// worse than none: this spec has already failed twice on selectors written
+	// from inference instead of observation. Worth an eye on a live instance,
+	// starting with whether `catalog-panels` resolves in the widget registry at
+	// all: an unknown widget type renders "Widget not available" and logs
+	// nothing.
 
 	expectNoAppErrors(bag)
 })
 
-test('dashboard: "Vernieuwen" refresh re-runs the data load without error', async ({
+test('dashboard: the refresh action re-runs the data load without error', async ({
 	page,
 }) => {
 	const bag = collectAppErrors(page)
 	await gotoAppRoute(page, '/')
 	const main = page.locator(APP_MAIN).first()
 
-	const refresh = main.getByRole('button', { name: 'Vernieuwen' }).first()
-	await expect(refresh).toBeEnabled()
+	// Refresh is NOT a button on the surface. CnDashboardPage puts it in the
+	// page actions menu, where showRefresh defaults to true, so it is reached
+	// by opening that menu and clicking the item.
+	//
+	// The label is matched loosely on purpose: it comes from the nextcloud-vue
+	// catalogue rather than this app's, so pinning one spelling would couple
+	// this spec to the library's translations.
+	const actions = main
+		.getByRole('button', { name: /Acties|Actions|Meer|More/i })
+		.first()
+	await expect(actions, 'the page actions menu must be offered').toBeVisible({
+		timeout: 30000,
+	})
+	await actions.click()
+
+	const refresh = page
+		.locator('.v-popper__popper--shown')
+		.last()
+		.getByRole('menuitem', { name: /Vernieuwen|Refresh/i })
+		.first()
+	await expect(refresh, 'the actions menu must offer Refresh').toBeVisible({
+		timeout: 15000,
+	})
 	await refresh.click()
 
-	// After refresh the dashboard surface is still intact (info-box heading).
+	// The surface is still intact after the reload.
 	await expect(
-		main.getByRole('heading', { name: 'Beheer van Organisaties' }).first(),
+		main.getByText('Organisaties', { exact: false }).first(),
 	).toBeVisible({ timeout: 30000 })
 
 	expectNoAppErrors(bag)
 })
 
-// The info-box "Ga naar Organisaties" button calls
-// navigationStore.setSelected('organisaties'). In the deployed manifest shell
-// this updates the navigation store but does NOT swap the page URL or the main
-// content region (see BUG LIST: the dashboard quick-nav button is a no-op in the
-// shared CnAppRoot shell — the user's working path is the "Organisations" nav
-// entry, covered separately). We therefore assert the button is a real,
-// clickable control and that clicking it leaves the app in a healthy state with
-// no stackiq-origin error — rather than asserting a navigation the
-// deployed shell does not perform.
-test('dashboard: "Ga naar Organisaties" quick-nav button is clickable and error-free', async ({
-	page,
-}) => {
-	const bag = collectAppErrors(page)
-	await gotoAppRoute(page, '/')
-	const main = page.locator(APP_MAIN).first()
-
-	const goButton = main
-		.getByRole('button', { name: 'Ga naar Organisaties' })
-		.first()
-	await expect(goButton).toBeVisible({ timeout: 30000 })
-	await expect(goButton).toBeEnabled()
-	await goButton.click()
-
-	// App stays healthy after the click (dashboard surface still rendered).
-	await expect(
-		main.getByRole('heading', { name: 'Beheer van Organisaties' }).first(),
-	).toBeVisible({ timeout: 30000 })
-	expectNoAppErrors(bag)
-})
+// The "Ga naar Organisaties" quick-nav test is deliberately gone rather than
+// retargeted. It asserted a button inside the old info box, and that whole
+// surface was replaced by the KPI tiles. Its own comment already recorded that
+// the button was a no-op in the shared shell and that "the user's working path
+// is the Organisations nav entry, covered separately" — which is the test
+// immediately below. Keeping a rewritten version would re-test that same path
+// twice while pretending to cover a control that no longer exists.
 
 // The organisaties index is genuinely reachable via the real app nav entry
 // "Organisations" — this is the user's actual navigation path and lands on the

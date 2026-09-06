@@ -13,14 +13,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  */
 
-const TITLE_FIELDS = [
-	'name',
-	'name',
-	'titel',
-	'title',
-	'organization',
-	'organisation',
-]
+const TITLE_FIELDS = ['name', 'titel', 'title', 'organization', 'organisation']
 const SUBTITLE_FIELDS = [
 	'email',
 	'contactEmail',

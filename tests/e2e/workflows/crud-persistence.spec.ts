@@ -1,3 +1,7 @@
+import type { Page } from '@playwright/test'
+import type { APIRequestContext } from '@playwright/test'
+import type { VoorzieningenConfig } from './_fixtures.ts'
+
 // SPDX-License-Identifier: EUPL-1.2
 // SPDX-FileCopyrightText: 2026 Conduction B.V.
 /**
@@ -41,27 +45,21 @@
  * exactly this run's rows through the OR deleteObject verb and never touches the
  * pre-existing demo data.
  */
-import { test, expect, type APIRequestContext } from '@playwright/test'
+import { expect, test } from '@playwright/test'
+import { cleanupByToken, newApiContext, resolveConfig, RUN_ID } from './_fixtures.ts'
 import {
-	navClickTo,
-	gotoAppRoute,
-	dismissSupportDialog,
+	clickAction,
 	collectAppErrors,
+	dismissSupportDialog,
 	expectNoAppErrors,
+	gotoAppRoute,
 	indexMain,
-	showTable,
 	listTotal,
+	navClickTo,
 	openCreateDialog,
 	openRowActions,
-	clickAction,
-} from './_ui'
-import {
-	newApiContext,
-	resolveConfig,
-	cleanupByToken,
-	RUN_ID,
-	type VoorzieningenConfig,
-} from './_fixtures'
+	showTable,
+} from './_ui.ts'
 
 /**
  * Wait for the edit dialog after an `Edit` row action, wherever it opens.
@@ -79,7 +77,7 @@ import {
  * @param page The Playwright page.
  * @return The visible edit dialog locator.
  */
-async function editDialogAfterEdit(page: import('@playwright/test').Page) {
+async function editDialogAfterEdit(page: Page) {
 	const dialog = page.locator('[role="dialog"], .modal-container').first()
 	const direct = await dialog
 		.waitFor({ state: 'visible', timeout: 5000 })
@@ -108,7 +106,7 @@ test.beforeAll(async () => {
 test.afterAll(async () => {
 	if (apiCtx && cfg) {
 		const removed = await cleanupByToken(apiCtx, cfg, RUN_ID)
-		// eslint-disable-next-line no-console
+
 		console.log(
 			`[crud-persistence] cleaned up ${removed} seeded row(s) for ${RUN_ID}`,
 		)

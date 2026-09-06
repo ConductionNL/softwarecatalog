@@ -20,7 +20,6 @@
 import ContractApprovalPanel from './components/contracts/ContractApprovalPanel.vue'
 import OrganisationMergePanel from './components/organisations/OrganisationMergePanel.vue'
 import ComplianceMatrixView from './views/ComplianceMatrixView.vue'
-import DashboardCustomView from './views/Dashboard.vue'
 import FlowDetailSidebar from './views/flows/FlowDetailSidebar.vue'
 import LifecycleRoadmapView from './views/LifecycleRoadmapView.vue'
 import SoftwareCatalogSettingsPage from './views/settings/StackiqSettings.vue'
@@ -41,11 +40,6 @@ export default {
 	},
 
 	// --- Lib gap: dashboard widget extraction pending. ---
-	// Preserved verbatim until extraction to a generic schema-stats widget.
-	DashboardCustomView: {
-		kind: 'page',
-		component: DashboardCustomView,
-	},
 
 	// --- Lib gap: per-organisation lifecycle roadmap. ---
 	LifecycleRoadmapView: {

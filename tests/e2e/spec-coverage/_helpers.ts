@@ -1,3 +1,5 @@
+import type { Page } from '@playwright/test'
+
 // SPDX-License-Identifier: EUPL-1.2
 // SPDX-FileCopyrightText: 2026 Conduction B.V.
 /**
@@ -10,8 +12,8 @@
  * buttons, view toggles, empty-state, dashboard widgets, settings sections) —
  * no Vue `$data`/`__vue__` patching.
  */
-import { expect, type Page } from '@playwright/test'
-import { APP_PATH } from '../base-url'
+import { expect } from '@playwright/test'
+import { APP_PATH } from '../base-url.ts'
 
 // Was the hardcoded pretty path `/apps/stackiq`, which only resolves
 // behind a rewrite rule. See the APP_PATH docblock in tests/e2e/base-url.ts —
@@ -158,11 +160,13 @@ export async function dismissWalkthrough(page: Page): Promise<void> {
 
 /** Deep-link to a route and wait for the Vue shell + main region to mount. */
 export async function gotoAppRoute(page: Page, route: string): Promise<void> {
-	// The in-app router runs in hash mode, so deep links are `#<route>`. A bare
-	// path form (e.g. `/apps/stackiq/settings`) boots the SPA but leaves
-	// the hash empty, so vue-router falls back to the default `/` (Dashboard)
-	// and the requested surface never mounts. Always navigate via the hash.
-	const url = route === '/' ? `${APP_BASE}#/` : `${APP_BASE}#${route}`
+	// The in-app router runs in HISTORY mode, so a deep link is a plain path.
+	// This works only because the AppHost SPA catch-all serves the app shell on
+	// any sub-path; if that route ever goes missing these navigations 404 at the
+	// server rather than falling back to the dashboard, which is the loud
+	// failure we want.
+	const base = APP_BASE.endsWith('/') ? APP_BASE.slice(0, -1) : APP_BASE
+	const url = route === '/' ? `${base}/` : `${base}${route}`
 	await page.goto(url, { waitUntil: 'domcontentloaded' })
 	await page
 		.locator(APP_SHELL)
@@ -183,16 +187,12 @@ export async function gotoAppRoute(page: Page, route: string): Promise<void> {
  * check below is unchanged in strength.
  *
  * ⚠️ This used to be `nav:has(a[href*="/apps/stackiq/"])`, which stopped
- * matching ANYTHING under vue-router 4. In hash mode v4 emits HASH-RELATIVE
- * hrefs (`#/organisaties`); vue-router 3 emitted the base too
- * (`/apps/stackiq/#/organisaties`). v4's `createHref` explicitly strips
- * everything before the `#`, so no configuration of `createWebHashHistory`
- * restores the old shape — the change is by design, not a misconfiguration.
- *
- * Navigation itself is unaffected: `#/organisaties` resolves against the current
- * document, the click navigates, and the target page renders. Verified in a
- * browser before this selector was touched, precisely so that a stale selector
- * could not be "fixed" into hiding a real routing regression.
+ * matching ANYTHING under vue-router 4 in HASH mode, because v4's `createHref`
+ * strips everything before the `#` and emits hash-relative hrefs
+ * (`#/organisaties`) where v3 emitted the base too. The app has since moved to
+ * history mode, so full-path hrefs are back — but the id-based selector below
+ * is kept deliberately: it identifies the element by a stable handle rather
+ * than by an href format the router owns, and so survives the next such change.
  *
  * `nav#app-navigation-vue` is @nextcloud/vue's own NcAppNavigation host and is
  * unique on the page (the other two navs are core's app-menu and user-menu), so

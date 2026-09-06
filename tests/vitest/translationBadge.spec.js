@@ -8,10 +8,10 @@
  * language. Exact-output assertions on every branch.
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
-	languageName,
 	getSourceLanguage,
+	languageName,
 	shouldShowTranslationBadge,
 	translationBadge,
 } from '../../src/utils/translationBadge.js'

@@ -120,8 +120,8 @@ class ContractStatusService {
 			return 0;
 		}
 
-		$registerId = $this->settingsService->getRegisterIdForObjectType('contract');
-		$schemaId = $this->settingsService->getSchemaIdForObjectType('contract');
+		$registerId = $this->settingsService->getRegisterIdForObjectType('catalogContract');
+		$schemaId = $this->settingsService->getSchemaIdForObjectType('catalogContract');
 		if ($registerId === null || $schemaId === null) {
 			$this->logger->info('ContractStatusService: contract register/schema not configured, skipping run');
 			return 0;

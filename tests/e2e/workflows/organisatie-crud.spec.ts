@@ -1,3 +1,6 @@
+import type { APIRequestContext } from '@playwright/test'
+import type { VoorzieningenConfig } from './_fixtures.ts'
+
 // SPDX-License-Identifier: EUPL-1.2
 // SPDX-FileCopyrightText: 2026 Conduction B.V.
 /**
@@ -25,23 +28,22 @@
  * Cleanup: the seeded org carries the RUN_ID token; afterAll deletes it via the
  * OR deleteObject verb.
  */
-import { test, expect, type APIRequestContext } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import {
-	navClickTo,
-	dismissSupportDialog,
-	collectAppErrors,
-	expectNoAppErrors,
-	indexMain,
-	openCreateDialog,
-} from './_ui'
-import {
+	cleanupByToken,
+	createObject,
 	newApiContext,
 	resolveConfig,
-	createObject,
-	cleanupByToken,
 	RUN_ID,
-	type VoorzieningenConfig,
-} from './_fixtures'
+} from './_fixtures.ts'
+import {
+	collectAppErrors,
+	dismissSupportDialog,
+	expectNoAppErrors,
+	indexMain,
+	navClickTo,
+	openCreateDialog,
+} from './_ui.ts'
 
 let apiCtx: APIRequestContext
 let cfg: VoorzieningenConfig
@@ -73,7 +75,7 @@ test.beforeAll(async () => {
 test.afterAll(async () => {
 	if (apiCtx && cfg) {
 		const removed = await cleanupByToken(apiCtx, cfg, RUN_ID)
-		// eslint-disable-next-line no-console
+
 		console.log(
 			`[organisatie-crud] cleaned up ${removed} seeded row(s) for ${RUN_ID}`,
 		)

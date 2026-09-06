@@ -96,7 +96,7 @@
 		     beoordeeling type, per catalog-ratings spec's "reuse the
 		     pattern, don't invent a second mechanism" requirement. -->
 		<ModerationQueue
-			type="assessment"
+			type="software-review"
 			entityLabel="review"
 			:name="t('stackiq', 'Review moderation')"
 			:description="

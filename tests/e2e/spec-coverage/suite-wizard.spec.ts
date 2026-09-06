@@ -1,3 +1,7 @@
+import type { APIRequestContext } from '@playwright/test'
+import type { Page } from '@playwright/test'
+import type { VoorzieningenConfig } from '../workflows/_fixtures.ts'
+
 // SPDX-License-Identifier: EUPL-1.2
 // SPDX-FileCopyrightText: 2026 Conduction B.V.
 /**
@@ -26,22 +30,20 @@
  *
  * @spec openspec/specs/suite-wizard/spec.md
  */
-import { test, expect, type Page } from '@playwright/test'
+import { expect, test } from '@playwright/test'
+import {
+	cleanupByToken,
+	createObject,
+	newApiContext,
+	resolveConfig,
+	RUN_ID,
+} from '../workflows/_fixtures.ts'
 import {
 	APP_MAIN,
 	collectAppErrors,
 	expectNoAppErrors,
 	navClickTo,
-} from './_helpers'
-import {
-	RUN_ID,
-	cleanupByToken,
-	createObject,
-	newApiContext,
-	resolveConfig,
-	type VoorzieningenConfig,
-} from '../workflows/_fixtures'
-import type { APIRequestContext } from '@playwright/test'
+} from './_helpers.ts'
 
 const APP_A = `Suite member A ${RUN_ID}`
 const APP_B = `Suite member B ${RUN_ID}`
@@ -314,7 +316,12 @@ test('suite wizard: submit creates the suite with both attached modules', async 
 	// What a user DOES see on success is the navigation to the new suite's
 	// detail page, so that is asserted instead — a real, observable outcome
 	// rather than a weakened one.
-	await expect(page).toHaveURL(/#\/suites\/[^/]+$/, { timeout: 30000 })
+	// Matches the hash form AND the path form. The shell navigates to
+	// /apps/stackiq/suites/<uuid> here, with no "#", so a hash-only pattern
+	// waited the full 30s while the browser was already sitting on the right
+	// detail page. The uuid is what proves the suite was created; whether the
+	// router spells it with a hash is not what this test is about.
+	await expect(page).toHaveURL(/(?:#)?\/suites\/[^/]+$/, { timeout: 30000 })
 
 	// The suite really was persisted, with BOTH modules in `applicaties`.
 	// Read back through the register the UI wrote to.

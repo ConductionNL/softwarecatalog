@@ -14,6 +14,7 @@ import {
 	buildManifest,
 	defaultPageTypes,
 	registerBuiltinDashboardWidgets,
+	registerDashboardWidget,
 	registerIcons,
 	registerTranslations,
 	resolveManifestSentinels,
@@ -26,8 +27,9 @@ import {
 } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { createApp, h } from 'vue'
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
+import CatalogPanels from './components/CatalogPanels.vue'
 import customComponents from './customComponents.js'
 import appIcons from './icons.js'
 import bundledManifest from './manifest.json'
@@ -54,6 +56,22 @@ registerIcons(appIcons)
 // render "Widget not available". This app uses `stat` and `stats-block` widgets
 // in detail-page widget slots, so the explicit call is load-bearing.
 registerBuiltinDashboardWidgets()
+
+// The dashboard's info box + the two object-statistics tables, moved out of the
+// old hand-written Dashboard view so the dashboard could become a declarative
+// `type:"dashboard"` page. The KPI tiles beside it are manifest `stat` widgets.
+//
+// ⚠️ A dashboard widget TYPE resolves against the LIBRARY's widget catalog (this
+// call), not the app's `registry` prop — that one is for page components and
+// slot overrides. An unregistered type renders "Widget not available" and logs
+// nothing at all.
+registerDashboardWidget('catalog-panels', {
+	renderer: CatalogPanels,
+	defaultContent: {},
+	displayName: 'Catalogue panels',
+	icon: 'DatabaseOutline',
+	card: true,
+})
 try {
 	registerTranslations()
 } catch (e) {
@@ -113,6 +131,34 @@ const customComponentsProp = { ...customComponents }
 const registryProp = { ...registry }
 
 /**
+ * The router base for THIS page load.
+ *
+ * ⚠️ `generateUrl('/apps/stackiq')` alone is not enough. Nextcloud serves the
+ * same app under BOTH `/apps/stackiq/...` and `/index.php/apps/stackiq/...`,
+ * but `generateUrl()` returns only the form the instance is configured for. If
+ * a visitor arrives on the other form — a bookmark, an emailed deep link, an
+ * integration that hardcodes `/index.php` — the path no longer starts with the
+ * router base, vue-router cannot resolve it, and the catch-all redirects to
+ * `/`. The user lands on the Dashboard with no error: the deep link is
+ * silently swallowed.
+ *
+ * Hash routing never had this, because the route travelled in the fragment and
+ * the path prefix was irrelevant. Measured on this app before the fix:
+ * `/apps/stackiq/komplianties` rendered Compliance, while
+ * `/index.php/apps/stackiq/komplianties` rendered the Dashboard — and that is
+ * the form the e2e suite uses, which is how it was caught.
+ *
+ * So derive the base from the URL actually being served, falling back to
+ * `generateUrl()` when the app segment is absent.
+ *
+ * @return {string} The base path vue-router should strip from the URL.
+ */
+function routerBase() {
+	const match = window.location.pathname.match(/^(.*\/apps\/stackiq)(?:\/|$)/)
+	return match ? match[1] : generateUrl('/apps/stackiq')
+}
+
+/**
  * Resolve `@resolve:<key>` IAppConfig sentinels in `manifest.pages[].config`
  * (e.g. `@resolve:voorzieningen_register`) APP-SIDE, before the router and
  * CnAppRoot ever read a page's `config.register`.
@@ -142,7 +188,14 @@ async function bootstrap() {
 	)
 
 	const router = createRouter({
-		history: createWebHashHistory(generateUrl('/apps/stackiq')),
+		// History mode: clean path URLs and working deep-links
+		// (/apps/stackiq/organisaties/{id}). This relies on the AppHost SPA
+		// catch-all serving the SPA index on any sub-path — verified before
+		// the switch: /apps/stackiq/organisaties, /contracten and
+		// /organisaties/abc-123 all return 200 with the app shell. Without
+		// that route a deep link 404s at the SERVER on reload, which is the
+		// reason apps fell back to hash mode (fleet #133).
+		history: createWebHistory(routerBase()),
 		routes: routesFromManifest(resolvedManifest),
 	})
 

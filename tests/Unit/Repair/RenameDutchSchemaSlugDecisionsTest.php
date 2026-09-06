@@ -59,11 +59,11 @@ final class RenameDutchSchemaSlugDecisionsTest extends TestCase {
 	 */
 	public function testPlanRenamesOnlyWhatIsPresent(): void {
 		$plan = $this->decisions->plan(
-			['dienst' => 'service', 'gebruik' => 'usage'],
+			['dienst' => 'catalogService', 'gebruik' => 'usage'],
 			['dienst', 'module']
 		);
 
-		self::assertSame(['dienst' => 'service'], $plan['renames']);
+		self::assertSame(['dienst' => 'catalogService'], $plan['renames']);
 		self::assertSame([], $plan['refused'], 'an absent slug is nothing to do, not a refusal');
 
 	}//end testPlanRenamesOnlyWhatIsPresent()
@@ -99,11 +99,11 @@ final class RenameDutchSchemaSlugDecisionsTest extends TestCase {
 	 */
 	public function testPlanSeesItsOwnEarlierRenames(): void {
 		$plan = $this->decisions->plan(
-			['dienst' => 'service', 'service2' => 'service'],
+			['dienst' => 'catalogService', 'service2' => 'catalogService'],
 			['dienst', 'service2']
 		);
 
-		self::assertSame(['dienst' => 'service'], $plan['renames']);
+		self::assertSame(['dienst' => 'catalogService'], $plan['renames']);
 		self::assertArrayHasKey('service2', $plan['refused']);
 
 	}//end testPlanSeesItsOwnEarlierRenames()

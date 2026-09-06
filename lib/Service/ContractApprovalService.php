@@ -115,7 +115,7 @@ class ContractApprovalService {
 	/**
 	 * The contract schema slug.
 	 */
-	public const SUBJECT_SCHEMA = 'contract';
+	public const SUBJECT_SCHEMA = 'catalogContract';
 
 	/**
 	 * Catalog lifecycle status: in negotiation (the pre-approval state).
@@ -492,8 +492,8 @@ class ContractApprovalService {
 			return null;
 		}
 
-		$registerId = $this->settingsService->getRegisterIdForObjectType(objectType: 'contract');
-		$schemaId = $this->settingsService->getSchemaIdForObjectType(objectType: 'contract');
+		$registerId = $this->settingsService->getRegisterIdForObjectType(objectType: 'catalogContract');
+		$schemaId = $this->settingsService->getSchemaIdForObjectType(objectType: 'catalogContract');
 		if ($registerId === null || $schemaId === null) {
 			return null;
 		}
@@ -563,8 +563,8 @@ class ContractApprovalService {
 			return null;
 		}
 
-		$registerId = $this->settingsService->getRegisterIdForObjectType(objectType: 'contract');
-		$schemaId = $this->settingsService->getSchemaIdForObjectType(objectType: 'contract');
+		$registerId = $this->settingsService->getRegisterIdForObjectType(objectType: 'catalogContract');
+		$schemaId = $this->settingsService->getSchemaIdForObjectType(objectType: 'catalogContract');
 		if ($registerId === null || $schemaId === null) {
 			return null;
 		}

@@ -8,10 +8,12 @@
  * in the static HTML. We must wait for the input fields to hydrate before filling.
  */
 
-import { chromium, type FullConfig } from '@playwright/test'
-import * as path from 'path'
+import type { FullConfig } from '@playwright/test'
+
+import { chromium } from '@playwright/test'
 import * as fs from 'fs'
-import { resolveBaseUrl } from './base-url'
+import * as path from 'path'
+import { resolveBaseUrl } from './base-url.ts'
 
 const AUTH_DIR = path.resolve(__dirname, '.auth')
 const STORAGE_STATE = path.join(AUTH_DIR, 'admin.json')
@@ -91,7 +93,27 @@ export default async function globalSetup(config: FullConfig): Promise<void> {
 		await page.evaluate(() => {
 			try {
 				window.localStorage.setItem('cn-walkthrough-seen:stackiq', '999.0.0')
-			} catch (e) {
+				// Same problem, different overlay: the NON-GATING first-time-setup
+				// wizard (ADR-042). Dismissing only the walkthrough left this one
+				// armed, and its `modal-mask` subtree intercepts every click on
+				// the app behind it. The tell is precise: a click reports the
+				// target as "visible, enabled and stable" and then times out
+				// anyway, with `data-testid-modal="cn-wizard-dialog"` named as
+				// the interceptor.
+				//
+				// It splits a suite rather than failing it — specs that navigate
+				// by URL pass, specs that click do not — so it reads as a
+				// half-broken app instead of one un-dismissed dialog.
+				//
+				// The dismissal key is per manifest `setup.version`; seed a
+				// generous range so a version bump does not silently re-arm it.
+				for (let v = 0; v <= 20; v++) {
+					window.localStorage.setItem(
+						`cn-setup-wizard-dismissed:stackiq:${v}`,
+						'1',
+					)
+				}
+			} catch {
 				// localStorage unavailable — specs fall back to dismissing by hand.
 			}
 		})

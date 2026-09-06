@@ -55,7 +55,7 @@ class MergeOrganisatieServiceTest extends TestCase {
 	private const SCHEMA_IDS = [
 		'organization' => 1,
 		'usage' => 2,
-		'contract' => 3,
+		'catalogContract' => 3,
 		'contactPerson' => 4,
 		'connection' => 5,
 		'compliancy' => 6,
@@ -103,7 +103,7 @@ class MergeOrganisatieServiceTest extends TestCase {
 				'usage' => 2,
 				'contactPerson' => 1,
 				'aanbod' => 1,
-				'contract' => 1,
+				'catalogContract' => 1,
 				'compliancy' => 1,
 			],
 			$result['counts']
@@ -185,7 +185,7 @@ class MergeOrganisatieServiceTest extends TestCase {
 				'org-b' => $this->entity(['id' => 'org-b', 'status' => 'Active']),
 			],
 			typedFixtures: [
-				'contract' => [
+				'catalogContract' => [
 					$this->entity(
 						['id' => 'c1', 'contractNumber' => 'C-100', 'cost' => 5000, 'documentReference' => 'doc-ref'],
 						uuid: 'c1',
@@ -198,7 +198,7 @@ class MergeOrganisatieServiceTest extends TestCase {
 
 		$service->execute(sourceUuid: 'org-a', targetUuid: 'org-b');
 
-		$contractSave = $this->findSave(schemaId: self::SCHEMA_IDS['contract'], uuid: 'c1');
+		$contractSave = $this->findSave(schemaId: self::SCHEMA_IDS['catalogContract'], uuid: 'c1');
 		$this->assertNotNull($contractSave);
 		$this->assertSame('org-b', $contractSave['object']['@self']['organisation']);
 		$this->assertSame('C-100', $contractSave['object']['contractNumber']);
@@ -275,7 +275,7 @@ class MergeOrganisatieServiceTest extends TestCase {
 				'org-b' => $this->entity(['id' => 'org-b', 'status' => 'Active']),
 			],
 			typedFixtures: [
-				'contract' => [
+				'catalogContract' => [
 					$this->entity(
 						['id' => 'c1', 'contractNumber' => 'C-100', 'cost' => 5000],
 						uuid: 'c1',
@@ -292,10 +292,10 @@ class MergeOrganisatieServiceTest extends TestCase {
 
 		$result = $service->execute(sourceUuid: 'org-a', targetUuid: 'org-b');
 
-		$this->assertSame(1, $result['counts']['contract'], 'the contract owned by the source MUST be counted');
+		$this->assertSame(1, $result['counts']['catalogContract'], 'the contract owned by the source MUST be counted');
 		$this->assertSame(1, $result['counts']['compliancy'], 'the compliancy owned by the source MUST be counted');
 
-		$contractSave = $this->findSave(schemaId: self::SCHEMA_IDS['contract'], uuid: 'c1');
+		$contractSave = $this->findSave(schemaId: self::SCHEMA_IDS['catalogContract'], uuid: 'c1');
 		$this->assertNotNull($contractSave, 'the contract MUST be re-pointed, not silently skipped');
 		$this->assertSame('org-b', $contractSave['object']['@self']['organisation']);
 		// PUT-semantics: every unrelated field is carried forward.
@@ -304,7 +304,7 @@ class MergeOrganisatieServiceTest extends TestCase {
 
 		$this->assertNotNull($this->findSave(schemaId: self::SCHEMA_IDS['compliancy'], uuid: 'cp1'));
 		$this->assertNull(
-			$this->findSave(schemaId: self::SCHEMA_IDS['contract'], uuid: 'c2'),
+			$this->findSave(schemaId: self::SCHEMA_IDS['catalogContract'], uuid: 'c2'),
 			'a contract already owned by the target MUST NOT be re-saved'
 		);
 
@@ -331,7 +331,7 @@ class MergeOrganisatieServiceTest extends TestCase {
 				'org-b' => $this->entity(['id' => 'org-b', 'status' => 'Active']),
 			],
 			typedFixtures: [
-				'contract' => [$this->entity(['id' => 'c1'], uuid: 'c1', organisation: 'org-a')],
+				'catalogContract' => [$this->entity(['id' => 'c1'], uuid: 'c1', organisation: 'org-a')],
 				'compliancy' => [$this->entity(['id' => 'cp1'], uuid: 'cp1', organisation: 'org-a')],
 			],
 			groupMembers: []
@@ -339,7 +339,7 @@ class MergeOrganisatieServiceTest extends TestCase {
 
 		$result = $service->dryRun(sourceUuid: 'org-a', targetUuid: 'org-b');
 
-		$this->assertSame(1, $result['counts']['contract']);
+		$this->assertSame(1, $result['counts']['catalogContract']);
 		$this->assertSame(1, $result['counts']['compliancy']);
 		$this->assertSame([], $this->savedCalls, 'dry-run MUST NOT write any object');
 	}//end testDryRunCountsSelfOrganisationRelationsForMagicAccessorEntities()
@@ -394,7 +394,7 @@ class MergeOrganisatieServiceTest extends TestCase {
 			typedFixtures: [
 				// gebruik/contract already point at the target — nothing left to do.
 				'usage' => [$this->entity(['id' => 'g1', 'consumer' => 'org-b'], uuid: 'g1')],
-				'contract' => [$this->entity(['id' => 'c1'], uuid: 'c1', organisation: 'org-b')],
+				'catalogContract' => [$this->entity(['id' => 'c1'], uuid: 'c1', organisation: 'org-b')],
 				// contactpersoon/koppeling/compliancy still reference the source.
 				'contactPerson' => [$this->entity(['id' => 'p1', 'organization' => 'org-a'], uuid: 'p1')],
 				'connection' => [$this->entity(['id' => 'k1', 'provider' => 'org-a'], uuid: 'k1')],
@@ -406,13 +406,13 @@ class MergeOrganisatieServiceTest extends TestCase {
 		$result = $service->execute(sourceUuid: 'org-a', targetUuid: 'org-b');
 
 		$this->assertSame(0, $result['counts']['usage']);
-		$this->assertSame(0, $result['counts']['contract']);
+		$this->assertSame(0, $result['counts']['catalogContract']);
 		$this->assertSame(1, $result['counts']['contactPerson']);
 		$this->assertSame(1, $result['counts']['aanbod']);
 		$this->assertSame(1, $result['counts']['compliancy']);
 
 		$this->assertNull($this->findSave(schemaId: self::SCHEMA_IDS['usage'], uuid: 'g1'));
-		$this->assertNull($this->findSave(schemaId: self::SCHEMA_IDS['contract'], uuid: 'c1'));
+		$this->assertNull($this->findSave(schemaId: self::SCHEMA_IDS['catalogContract'], uuid: 'c1'));
 		$this->assertNotNull($this->findSave(schemaId: self::SCHEMA_IDS['contactPerson'], uuid: 'p1'));
 	}//end testReRunningExecuteAfterPartialCompletionOnlyFinishesRemainingTypes()
 
@@ -434,7 +434,7 @@ class MergeOrganisatieServiceTest extends TestCase {
 			typedFixtures: [
 				// Everything already re-pointed to the target.
 				'usage' => [$this->entity(['id' => 'g1', 'consumer' => 'org-b'], uuid: 'g1')],
-				'contract' => [$this->entity(['id' => 'c1'], uuid: 'c1', organisation: 'org-b')],
+				'catalogContract' => [$this->entity(['id' => 'c1'], uuid: 'c1', organisation: 'org-b')],
 			],
 			groupMembers: []
 		);
@@ -444,7 +444,7 @@ class MergeOrganisatieServiceTest extends TestCase {
 		$this->assertTrue($result['ok']);
 		$this->assertSame('already_completed', $result['status']);
 		$this->assertNull($this->findSave(schemaId: self::SCHEMA_IDS['usage'], uuid: 'g1'));
-		$this->assertNull($this->findSave(schemaId: self::SCHEMA_IDS['contract'], uuid: 'c1'));
+		$this->assertNull($this->findSave(schemaId: self::SCHEMA_IDS['catalogContract'], uuid: 'c1'));
 	}//end testReRunningAFullyCompletedMergeIsASafeNoOp()
 
 	/**
@@ -613,7 +613,7 @@ class MergeOrganisatieServiceTest extends TestCase {
 				$this->entity(['id' => 'g2', 'consumer' => 'org-x', 'participants' => ['org-a', 'org-c', 'org-d']], uuid: 'g2'),
 				$this->entity(['id' => 'g3', 'consumer' => 'org-y', 'participants' => ['org-z']], uuid: 'g3'),
 			],
-			'contract' => [
+			'catalogContract' => [
 				$this->entity(['id' => 'c1', 'contractNumber' => 'C-100'], uuid: 'c1', organisation: 'org-a'),
 				$this->entity(['id' => 'c2'], uuid: 'c2', organisation: 'org-b'),
 			],

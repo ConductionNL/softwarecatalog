@@ -79,7 +79,7 @@ export function buildFacetQueryParams({
 /**
  * Fetch GEMMA-dimension facet counts for a schema.
  *
- * @param {string} schema `module` or `dienst`.
+ * @param {string} schema `module` or `catalogService`.
  * @param {object} [options] See `buildFacetQueryParams()`.
  * @return {Promise<object>} The facet response: `{ referenceComponent, standard, applicationService, domain, _meta }`.
  *

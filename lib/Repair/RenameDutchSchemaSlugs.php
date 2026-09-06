@@ -69,7 +69,7 @@ class RenameDutchSchemaSlugs implements IRepairStep {
 	 * @var array<string, string>
 	 */
 	public const SLUG_MAP = [
-		'beoordeeling' => 'assessment',
+		'beoordeeling' => 'software-review',
 		'bioMaatregel' => 'bioMeasure',
 		'contactpersoon' => 'contactPerson',
 		'dienst' => 'service',

@@ -98,16 +98,17 @@ class SettingsServiceCatalogTypeResolutionTest extends TestCase {
 	}//end makeService()
 
 	/**
-	 * `beoordeeling` — the type the ratings feature resolves — must map to
-	 * schema 43 and register 11.
+	 * `beoordeeling` — the config key the ratings feature resolves through —
+	 * must map to schema 43 and register 11 for the `software-review` type.
+	 * The object TYPE moved with the schema slug; the config KEY did not.
 	 *
 	 * @return void
 	 */
 	public function testBeoordeelingResolvesRegisterAndSchema(): void {
 		$service = $this->makeService();
 
-		$this->assertSame(43, $service->getSchemaIdForObjectType('assessment'), 'schema id');
-		$this->assertSame(11, $service->getRegisterIdForObjectType('assessment'), 'register id');
+		$this->assertSame(43, $service->getSchemaIdForObjectType('software-review'), 'schema id');
+		$this->assertSame(11, $service->getRegisterIdForObjectType('software-review'), 'register id');
 
 	}//end testBeoordeelingResolvesRegisterAndSchema()
 
@@ -122,16 +123,16 @@ class SettingsServiceCatalogTypeResolutionTest extends TestCase {
 
 		$types = [
 			'module' => 50,
-			'service' => 36,
+			'catalogService' => 36,
 			'usage' => 40,
-			'contract' => 41,
+			'catalogContract' => 41,
 			'connection' => 42,
 			'suite' => 35,
 			'vulnerability' => 37,
 			'sector' => 34,
 			'compliancy' => 51,
 			'moduleVersion' => 52,
-			'assessment' => 43,
+			'software-review' => 43,
 		];
 
 		foreach ($types as $type => $schemaId) {

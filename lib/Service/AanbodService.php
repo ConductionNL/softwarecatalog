@@ -151,7 +151,7 @@ class AanbodService {
 			}
 
 			if ($dienstSchema !== null) {
-				$schemasToSearch[] = ['schema' => $dienstSchema, 'type' => 'service', 'filter_field' => 'provider'];
+				$schemasToSearch[] = ['schema' => $dienstSchema, 'type' => 'catalogService', 'filter_field' => 'provider'];
 			}
 
 			// Search each schema type.

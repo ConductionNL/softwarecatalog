@@ -83,8 +83,8 @@ function loadJson(file) {
 }
 
 function loadAjv() {
-	let Ajv2020 = null
-	let addFormats = null
+	let Ajv2020
+	let addFormats
 	try {
 		Ajv2020 = require('ajv/dist/2020').default || require('ajv/dist/2020')
 	} catch (_) {

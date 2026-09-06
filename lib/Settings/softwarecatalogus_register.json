@@ -3,7 +3,7 @@
   "info": {
     "title": "Software Catalog Register",
     "description": "Register containing AMEF and Voorzieningen schemas for the VNG Software Catalog application. This configuration includes schemas for applications, services, organizations, and compliance tracking.",
-    "version": "2.4.4",
+    "version": "2.5.0",
     "changelog": "2.4.4: organization.status was left behind by #520's enum translation — its `default` was still 'Concept' and its whole x-openregister-lifecycle block still named Concept/Actief/Deactief, while the enum and the migrated rows are Draft/Active/Inactive/merged. A default outside its own enum makes every newly created organisation fall out of the Organisations index filter, and a lifecycle whose from/to values match no row offers no transition at all — neither raises an error. The schema version is bumped with it because a deployed version >= the declared one makes the import SKIP, and OpenRegister's schemaContentDiffers() escape hatch compares only properties/required/authorization — never `configuration` — so a lifecycle-only edit would never have deployed. 2.4.3: Re-authored Dutch schema-level titles to English (dienst, kwetsbaarheid, contactpersoon, organisatie, gebruik, koppeling, beoordeeling, module, bioMaatregel, moduleVersie, sbomComponent); schema keys unchanged, Dutch labels now come from the app's l10n translation files. 2.4.2: Moved SBOM provenance properties (sbomLastImportedAt, sbomFormat, sbomFileName, sbomComponents) from the organisatie schema to moduleVersie, where SBOM imports actually record them; without this the moduleVersie magic table lacked the columns so recordProvenance() writes were silently dropped and the import-status endpoint always reported 'never imported'. 2.4.1: Re-authored Dutch schema property titles to English (property keys unchanged); Dutch labels now come from the app's l10n translation files."
   },
   "x-openregister": {
@@ -824,14 +824,14 @@
           "sector",
           "suite",
           "module",
-          "service",
+          "catalogService",
           "vulnerability",
           "contactPerson",
           "organization",
           "usage",
-          "contract",
+          "catalogContract",
           "connection",
-          "assessment",
+          "software-review",
           "compliancy",
           "moduleVersion",
           "sbomComponent",
@@ -882,7 +882,7 @@
               "magicMapping": true,
               "autoCreateTable": true
             },
-            "contract": {
+            "catalogContract": {
               "magicMapping": true,
               "autoCreateTable": true
             },
@@ -890,7 +890,7 @@
               "magicMapping": true,
               "autoCreateTable": true
             },
-            "assessment": {
+            "software-review": {
               "magicMapping": true,
               "autoCreateTable": true
             },
@@ -1321,9 +1321,9 @@
           }
         }
       },
-      "service": {
+      "catalogService": {
         "uri": null,
-        "slug": "service",
+        "slug": "catalogService",
         "x-schema-org": "schema:Service",
         "title": "Service",
         "description": "Een specifiek aanbod van een dienst op een of meerdere applicaties door een leverancier",
@@ -1638,7 +1638,7 @@
         "description": "Schema voor kwetsbaarheden. Dit schema is onderdeel van het vastgestelde datamodel maar wordt niet daadwerkelijk in de applicatie gebruikt.",
         "version": "1.0.20",
         "omschrijving": "",
-        "icon": "ShieldAlert",
+        "icon": "ShieldAlertOutline",
         "required": [
           "name",
           "shortDescription",
@@ -2656,7 +2656,7 @@
         "slug": "usage",
         "title": "Usage",
         "description": "Het gebruik van applicaties, diensten en koppelingen door afnemers",
-        "version": "1.4.1",
+        "version": "1.5.0",
         "omschrijving": "",
         "icon": "Gauge",
         "x-openregister-notifications": {
@@ -3009,6 +3009,14 @@
               "type": "string"
             }
           },
+          "elementRef": {
+            "description": "Id of the ArchiMate element this usage is shown on.",
+            "type": "string",
+            "visible": false,
+            "order": 23,
+            "facetable": false,
+            "title": "ArchiMate element"
+          },
           "koppelingen": {
             "description": "De koppelingen die gebruikt worden binnen dit productgebruik",
             "type": "array",
@@ -3036,7 +3044,7 @@
               "objectConfiguration": {
                 "handling": "related-object"
               },
-              "$ref": "#/components/schemas/service"
+              "$ref": "#/components/schemas/catalogService"
             }
           },
           "cloudDienstverleningsmodel": {
@@ -3239,9 +3247,9 @@
           }
         }
       },
-      "contract": {
+      "catalogContract": {
         "uri": null,
-        "slug": "contract",
+        "slug": "catalogContract",
         "x-openregister-notifications": {
           "contract-expiry": {
             "trigger": {"type": "scheduled", "intervalSec": 86400, "filter": {"status": {"operator": "equals", "value": "Actief"}, "endDate": {"operator": "withinNext", "value": "P90D"}}},
@@ -3261,7 +3269,7 @@
         "description": "Een formele overeenkomst voor het inzetten van een Dienst op een Gebruik. Beschrijft de inkooprelatie achter een Gebruik (welke organisatie welke module onder welke voorwaarden gebruikt): looptijd, kosten, contracttype en status.",
         "version": "0.1.1",
         "omschrijving": "",
-        "icon": "FileDocumentEdit",
+        "icon": "FileSign",
         "required": [
           "service",
           "usage",
@@ -3271,6 +3279,13 @@
           "status"
         ],
         "properties": {
+          "contract": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Governing contract",
+            "x-external-register": "shillinq",
+            "description": "UUID of the shillinq `Contract` this catalogue record belongs to. shillinq owns contract lifecycle (ADR-066). A plain uuid and not a `$ref`: shillinq's register is a different register, and ADR-062 rule 7 gives a cross-register target a plain string. Empty when shillinq is not installed, in which case this record stands alone."
+          },
           "service": {
             "description": "De dienst waarop dit contract betrekking heeft",
             "type": "object",
@@ -3281,7 +3296,7 @@
             "objectConfiguration": {
               "handling": "related-object"
             },
-            "$ref": "#/components/schemas/service"
+            "$ref": "#/components/schemas/catalogService"
           },
           "usage": {
             "description": "Het gebruik van de voorziening waarop dit contract betrekking heeft",
@@ -3552,7 +3567,7 @@
         "description": "Schema voor koppelingen tussen applicaties en systemen. ApplicatieB is voor koppelingen met andere applicaties. BuitengemeentelijkVoorziening is voor koppelingen met externe voorzieningen.",
         "version": "0.3.1",
         "omschrijving": "",
-        "icon": "Link",
+        "icon": "TransitConnectionVariant",
         "required": [
           "name"
         ],
@@ -3770,7 +3785,7 @@
             "objectConfiguration": {
               "handling": "related-object"
             },
-            "$ref": "#/components/schemas/service",
+            "$ref": "#/components/schemas/catalogService",
             "inversedBy": "koppelingen"
           },
           "registeredBy": {
@@ -3941,9 +3956,9 @@
           }
         }
       },
-      "assessment": {
+      "software-review": {
         "uri": null,
-        "slug": "assessment",
+        "slug": "software-review",
         "x-openregister-notifications": {
           "review-submitted": {
             "trigger": {"type": "created"},
@@ -4020,7 +4035,7 @@
                 "handling": "related-object"
               },
               "$ref": "#/components/schemas/module",
-              "inversedBy": "assessment"
+              "inversedBy": "software-review"
             }
           },
           "diensten": {
@@ -4035,7 +4050,7 @@
               "objectConfiguration": {
                 "handling": "related-object"
               },
-              "$ref": "#/components/schemas/service"
+              "$ref": "#/components/schemas/catalogService"
             }
           },
           "koppelingen": {
@@ -4064,6 +4079,30 @@
               "handling": "related-object"
             },
             "$ref": "#/components/schemas/usage"
+          },
+          "auteur": {
+            "type": "string",
+            "description": "Display name of the submitting user. Stamped server-side by ReviewService from the authenticated Nextcloud session at submission time — a client-supplied value is always discarded and never persisted.",
+            "visible": true,
+            "facetable": false,
+            "title": "Auteur",
+            "order": 10,
+            "example": "Bijvoorbeeld: Jan Jansen"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
+            "default": "pending",
+            "description": "Moderation status. Every new review is forced to 'pending' server-side by ReviewService regardless of client input; only an admin approval/rejection decision (ModerationService, reusing the organisatie moderation pattern) may transition it. The public RBAC read rule below only ever matches 'approved'.",
+            "visible": true,
+            "facetable": true,
+            "title": "Status",
+            "order": 11,
+            "example": "Bijvoorbeeld: pending"
           }
         },
         "archive": [],
@@ -5264,7 +5303,7 @@
         "description": "AMEF View - Architectuur views en diagrammen uit het ArchiMate model",
         "version": "0.0.7",
         "omschrijving": "",
-        "icon": "Eye",
+        "icon": "EyeOutline",
         "required": [
           "identifier",
           "type",
@@ -7019,7 +7058,7 @@
               "objectConfiguration": {
                 "handling": "related-object"
               },
-              "$ref": "#/components/schemas/service",
+              "$ref": "#/components/schemas/catalogService",
               "inversedBy": "modules"
             }
           },

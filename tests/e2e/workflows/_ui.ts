@@ -1,3 +1,5 @@
+import type { Locator, Page } from '@playwright/test'
+
 // SPDX-License-Identifier: EUPL-1.2
 // SPDX-FileCopyrightText: 2026 Conduction B.V.
 /**
@@ -10,20 +12,20 @@
  * NcActions menu with View/Edit/Copy/Delete, the create/edit form fields and
  * the delete-confirm dialog). No Vue `$data` / `__vue__` patching.
  */
-import { expect, type Page, type Locator } from '@playwright/test'
+import { expect } from '@playwright/test'
 
 // `gotoAppRoute` is re-exported alongside `navClickTo` because not every
 // manifest page has a navigation entry: `/contactpersonen` is routable but was
 // deliberately dropped from the menu when contact identity moved to the
 // Nextcloud addressbook, so for that page the route IS the user's real path.
 export {
-	navClickTo,
-	gotoAppRoute,
-	dismissSupportDialog,
-	collectAppErrors,
-	expectNoAppErrors,
 	APP_MAIN,
-} from '../spec-coverage/_helpers'
+	collectAppErrors,
+	dismissSupportDialog,
+	expectNoAppErrors,
+	gotoAppRoute,
+	navClickTo,
+} from '../spec-coverage/_helpers.ts'
 
 /** The CnIndexPage main content region. */
 export function indexMain(page: Page): Locator {

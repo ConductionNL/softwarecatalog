@@ -1,3 +1,6 @@
+import type { APIRequestContext } from '@playwright/test'
+import type { VoorzieningenConfig } from '../workflows/_fixtures.ts'
+
 // SPDX-License-Identifier: EUPL-1.2
 // SPDX-FileCopyrightText: 2026 Conduction B.V.
 /**
@@ -30,22 +33,20 @@
  *
  * @spec openspec/specs/gemma-faceted-search/spec.md
  */
-import { test, expect } from '@playwright/test'
-import type { APIRequestContext } from '@playwright/test'
+import { expect, test } from '@playwright/test'
+import {
+	createObject,
+	deleteObject,
+	newApiContext,
+	resolveConfig,
+	RUN_ID,
+} from '../workflows/_fixtures.ts'
 import {
 	APP_MAIN,
 	collectAppErrors,
 	expectNoAppErrors,
 	navClickTo,
-} from './_helpers'
-import {
-	RUN_ID,
-	createObject,
-	deleteObject,
-	newApiContext,
-	resolveConfig,
-	type VoorzieningenConfig,
-} from '../workflows/_fixtures'
+} from './_helpers.ts'
 
 const FACETS = '/index.php/apps/stackiq/api/facets'
 /** The four GEMMA dimensions the endpoint must always describe. */
@@ -120,7 +121,7 @@ test('facets: the response carries all four GEMMA dimensions, empty ones as [] n
 	// rather than a weaker version of it.
 	for (const dim of DIMENSIONS) {
 		expect(
-			Object.prototype.hasOwnProperty.call(body, dim),
+			Object.hasOwn(body, dim),
 			`dimension "${dim}" is missing from the response`,
 		).toBe(true)
 		expect(
@@ -148,26 +149,40 @@ test('facets: an unsupported schema is rejected with 400 naming the supported on
 	// to reject — so both names are asserted, not just a non-2xx.
 	//
 	// ⚠️ The supported set is `FacetService::SUPPORTED_SCHEMAS = ['module',
-	// 'service']`. This assertion used to look for `dienst`, the pre-#518 Dutch
+	// 'catalogService']`. This assertion used to look for `dienst`, the pre-#518 Dutch
 	// slug, and so did the 200 control below — a slug rename moved the API and
 	// left the test naming a schema the service has never heard of.
 	expect(
 		message,
 		`error message did not name the supported schemas: ${message}`,
 	).toMatch(/module/)
-	expect(message).toMatch(/service/)
+	// `catalogService`, not `/service/`. #958 namespaced the slug and this
+	// regex is case-sensitive, so it stopped matching the very name it is here
+	// to check — the message read "Supported schemas: module, catalogService"
+	// and the assertion still failed.
+	expect(message).toMatch(/catalogService/)
 
 	// The supported set is also machine-readable, and must be exactly the two.
 	// ⚠️ `Array.prototype.sort()` sorts IN PLACE and returns the sorted array,
 	// so the expected literal has to be sorted too — comparing a sorted actual
-	// against `['service', 'module']` could never have held whichever names the
+	// against `['catalogService', 'module']` could never have held whichever names the
 	// service used. Copy before sorting so the response body is not mutated.
-	expect([...(body?.supportedSchemas ?? [])].sort()).toEqual(['module', 'service'])
+	// SORTED, and the rename moved which one comes first. `'catalogService'`
+	// sorts before `'module'` (ASCII 'c' < 'm'), where the pre-#958 `'service'`
+	// sorted after it. This literal kept the old ORDER with the new NAME, so it
+	// could not have held either — it was simply never reached, because the
+	// assertion above threw first.
+	expect([...(body?.supportedSchemas ?? [])].sort()).toEqual([
+		'catalogService',
+		'module',
+	])
 
 	// Control: the same endpoint shape with a SUPPORTED schema is a 200, so the
 	// 400 above is about the schema and not about the route being broken.
-	const ok = await ctx.get(`${FACETS}/service`)
-	expect(ok.status(), `GET ${FACETS}/service returned ${ok.status()}`).toBe(200)
+	const ok = await ctx.get(`${FACETS}/catalogService`)
+	expect(ok.status(), `GET ${FACETS}/catalogService returned ${ok.status()}`).toBe(
+		200,
+	)
 })
 
 // ⚠️ `no-text-query-returns-facets-over-the-full-rbac-scoped-set` IS DELIBERATELY

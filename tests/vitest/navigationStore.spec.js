@@ -9,8 +9,8 @@
  * through a real Pinia instance; console noise is silenced.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useNavigationStore } from '../../src/store/modules/navigation.js'
 
 describe('stackiq navigation store', () => {

@@ -43,7 +43,7 @@ class ReviewAggregateService {
 	/**
 	 * The catalog object type reviews live on.
 	 */
-	public const REVIEW_TYPE = 'assessment';
+	public const REVIEW_TYPE = 'software-review';
 
 	/**
 	 * Public-visible moderation state.
@@ -55,7 +55,7 @@ class ReviewAggregateService {
 	 *
 	 * @var array<int,string>
 	 */
-	public const SUBJECT_TYPES = ['module', 'service'];
+	public const SUBJECT_TYPES = ['module', 'catalogService'];
 
 	/**
 	 * Constructor.
@@ -75,7 +75,7 @@ class ReviewAggregateService {
 	 * The approved-only aggregate (average + count) and a bounded list of
 	 * approved reviews for a module or dienst.
 	 *
-	 * @param string $subjectType 'module' or 'service'.
+	 * @param string $subjectType 'module' or 'catalogService'.
 	 * @param string $subjectId The uuid of the module/dienst.
 	 *
 	 * @return array{ok:bool, reason:string, average:?float, count:int, items:array<int,array<string,mixed>>} Result.

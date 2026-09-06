@@ -6,7 +6,7 @@
 /**
  * Pinia store for GEMMA-dimension facet state (gemma-faceted-search).
  *
- * Holds, per schema (`module` / `dienst`): the active facet selection, the
+ * Holds, per schema (`module` / `catalogService`): the active facet selection, the
  * free-text search term, and the last-fetched facet counts. Also owns the
  * URL query <-> filter-state round-trip (deep-linkable filter state) and the
  * saved-view state extraction/restoration used by the "save as view" flow.
@@ -29,7 +29,7 @@ import {
  * the bare dimension names (`referenceComponent`, `standard`, …) used on
  * the wire to `FacetController` — CnIndexPage's self-fetch mode reads EVERY
  * non-underscore-prefixed `$route.query` key as a literal object-list filter
- * (`useSelfFetchList.resolveQueryFilters()`), and the `module`/`dienst`
+ * (`useSelfFetchList.resolveQueryFilters()`), and the `module`/`catalogService`
  * schema has no field named `referenceComponent`/`standard`/`domain`/
  * `applicationService` (the real fields are `referentieComponenten`,
  * `standaardVersies`, … — see design.md). Letting the bare dimension name
@@ -113,7 +113,12 @@ function emptySchemaState() {
 export const useFacetStore = defineStore('facets', {
 	state: () => ({
 		module: emptySchemaState(),
-		service: emptySchemaState(),
+		// `catalogService`, the slug this app declares since #958. State is
+		// keyed BY SCHEMA, so a bucket named for the old slug is not a stale
+		// label: `setFilter('catalogService', …)` writes nowhere and reads back
+		// `undefined`, because Pinia state cannot grow a key that was never
+		// declared. The failure surfaces as a missing filter, not a bad name.
+		catalogService: emptySchemaState(),
 	}),
 
 	getters: {
@@ -156,7 +161,7 @@ export const useFacetStore = defineStore('facets', {
 		 * schema's own object-list query via `{ id: [...] }` (see
 		 * `FacetService::computeFacetsForRequest()`'s docblock for why an
 		 * id-based filter is used instead of re-deriving one from the facet
-		 * selection: `domain`/`applicationService` are not module/dienst
+		 * selection: `domain`/`applicationService` are not module/catalogService
 		 * fields at all, and `referenceComponent`/`standard` values are
 		 * display NAMES, not the identifiers the schema actually stores).
 		 *
@@ -176,7 +181,7 @@ export const useFacetStore = defineStore('facets', {
 		 * Fetch facet counts for a schema using its current activeFilters/search,
 		 * combining free-text search with the active facet selection.
 		 *
-		 * @param {string} schema `module` or `dienst`.
+		 * @param {string} schema `module` or `catalogService`.
 		 * @param {object} [options] Fetch options.
 		 * @param {string} [options.organization] Optional organisation override.
 		 * @return {Promise<void>}
@@ -215,7 +220,7 @@ export const useFacetStore = defineStore('facets', {
 		 * Apply a facet selection change (`CnFacetSidebar`'s `@filter-change`
 		 * payload shape: `{ key, values }`).
 		 *
-		 * @param {string} schema `module` or `dienst`.
+		 * @param {string} schema `module` or `catalogService`.
 		 * @param {string} dimension The facet dimension key.
 		 * @param {Array|string|null} values The new selection for that dimension.
 		 * @return {void}
@@ -243,7 +248,7 @@ export const useFacetStore = defineStore('facets', {
 		/**
 		 * Set the free-text search term for a schema.
 		 *
-		 * @param {string} schema `module` or `dienst`.
+		 * @param {string} schema `module` or `catalogService`.
 		 * @param {string} value The search term.
 		 * @return {void}
 		 * @spec openspec/specs/gemma-faceted-search/spec.md#requirement-facets-combine-with-free-text-search
@@ -259,7 +264,7 @@ export const useFacetStore = defineStore('facets', {
 		/**
 		 * Clear every active facet filter for a schema (search term untouched).
 		 *
-		 * @param {string} schema `module` or `dienst`.
+		 * @param {string} schema `module` or `catalogService`.
 		 * @return {void}
 		 *
 		 * @spec openspec/specs/gemma-faceted-search/spec.md#requirement-filter-state-is-url-encoded-and-deep-linkable
@@ -276,7 +281,7 @@ export const useFacetStore = defineStore('facets', {
 		 * Restore filter + search state from a parsed `$route.query`-shaped
 		 * object (deep link / saved view restoration).
 		 *
-		 * @param {string} schema `module` or `dienst`.
+		 * @param {string} schema `module` or `catalogService`.
 		 * @param {object} query `$route.query` (or a saved view's stored state).
 		 * @return {void}
 		 *
@@ -316,7 +321,7 @@ export const useFacetStore = defineStore('facets', {
 		 * literal object-list filter) never sees — and never mis-applies — a
 		 * GEMMA dimension name.
 		 *
-		 * @param {string} schema `module` or `dienst`.
+		 * @param {string} schema `module` or `catalogService`.
 		 * @return {object} Query object; facet-related keys are OMITTED when unset
 		 *                  (clearing all facets removes the query parameters).
 		 *
@@ -348,7 +353,7 @@ export const useFacetStore = defineStore('facets', {
 		 * schema (`query.gemmaSchema === schema`), since that endpoint is
 		 * shared across every index page's saved views.
 		 *
-		 * @param {string} schema `module` or `dienst`.
+		 * @param {string} schema `module` or `catalogService`.
 		 * @return {Promise<void>}
 		 *
 		 * @spec openspec/specs/gemma-faceted-search/spec.md#requirement-a-facet-selection-can-be-saved-as-a-view
@@ -390,7 +395,7 @@ export const useFacetStore = defineStore('facets', {
 		 * a named view via the existing OpenRegister Views API — no new
 		 * `ViewController`/`ViewService` endpoint is introduced (task 13).
 		 *
-		 * @param {string} schema `module` or `dienst`.
+		 * @param {string} schema `module` or `catalogService`.
 		 * @param {string} name The view name.
 		 * @return {Promise<object>} The created view.
 		 *
@@ -432,7 +437,7 @@ export const useFacetStore = defineStore('facets', {
 		 * schema's active state (does NOT fetch — caller follows up with
 		 * `fetchFacets`).
 		 *
-		 * @param {string} schema `module` or `dienst`.
+		 * @param {string} schema `module` or `catalogService`.
 		 * @param {object} view The saved view (as returned by `fetchSavedViews`).
 		 * @return {void}
 		 *

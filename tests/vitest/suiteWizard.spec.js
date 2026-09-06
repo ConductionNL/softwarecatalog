@@ -7,11 +7,11 @@
  * @spec openspec/specs/suite-wizard/spec.md#requirement-the-wizard-must-require-at-least-one-attached-application-before-advancing-past-the-applications-step
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
-	isDetailsStepValid,
-	isApplicationsStepValid,
 	buildSuitePayload,
+	isApplicationsStepValid,
+	isDetailsStepValid,
 	summarizeApplications,
 } from '../../src/utils/suiteWizard.js'
 

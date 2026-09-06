@@ -1,3 +1,5 @@
+import type { Page } from '@playwright/test'
+
 // SPDX-License-Identifier: EUPL-1.2
 // SPDX-FileCopyrightText: 2026 Conduction B.V.
 /**
@@ -34,13 +36,14 @@
  * @spec openspec/specs/portfolio-rationalization-time/spec.md
  * @spec openspec/specs/eol-feed-integration/spec.md
  */
-import { test, expect, type Page } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import {
 	APP_MAIN,
 	collectAppErrors,
 	expectNoAppErrors,
+	gotoAppRoute,
 	navClickTo,
-} from './_helpers'
+} from './_helpers.ts'
 
 /**
  * The four GEMMA dimensions `FacetedCatalogIndexView` declares in
@@ -118,7 +121,35 @@ test('portfolio rationalization: PortfolioReport renders its report chrome', asy
 	page,
 }) => {
 	const bag = collectAppErrors(page)
-	await navClickTo(page, 'Portfolio rationalization')
+
+	// 🔴 THE CARD IS ITS ONLY ENTRY POINT. This clicked a nav entry called
+	// "Portfolio rationalization" until #942 moved the report onto the Reports
+	// page as a card (ADR-112: a report is a card OR an entry, never both).
+	// There is no such nav link any more, so the click waited 30s for a locator
+	// that can never resolve — which reads as a broken page rather than a
+	// retired menu entry.
+	await gotoAppRoute(page, '/reports')
+	const reports = page.locator(APP_MAIN).first()
+	await expect(reports).toBeVisible({ timeout: 30000 })
+
+	// 🔴 THE CARD'S ACCESSIBLE NAME IS NOT ITS LABEL. CnReportsPage wraps the
+	// whole card in one `<a>` — title, description and category — so its
+	// accessible name is all three concatenated and
+	// `getByRole('link', {name: 'Portfolio rationalization', exact: true})`
+	// matches nothing. It is addressed by its own testid and its title span.
+	const cards = reports.locator('[data-testid="cn-report-card"]')
+	// LIVENESS CONTROL: the grid rendered at all, so a card that does not match
+	// below is a missing card rather than a page that never mounted.
+	await expect(cards.first()).toBeVisible({ timeout: 30000 })
+
+	await cards
+		.filter({
+			has: page.locator(
+				'.cn-reports-page__card-title:text-is("Portfolio rationalization")',
+			),
+		})
+		.first()
+		.click()
 
 	const main = page.locator(APP_MAIN).first()
 	await expect(main).toBeVisible({ timeout: 30000 })

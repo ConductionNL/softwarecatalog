@@ -9,14 +9,14 @@
  * @spec openspec/specs/software-license-posture/spec.md
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
+	deploymentCount,
 	LICENSE_TYPE,
 	normaliseLicenseType,
-	deploymentCount,
-	portfolioPosture,
-	perVendorRollup,
 	perOrganisationPosture,
+	perVendorRollup,
+	portfolioPosture,
 } from '../../src/utils/licensePosture.js'
 
 // Modules: M1 open (vendor VA), M2 closed (vendor VA), M3 unknown-type (vendor VB),
@@ -40,11 +40,13 @@ const modules = [
 	{ id: 'M4', name: 'Shelfware', licentietype: 'Closed source', provider: 'VB' },
 ]
 
-const inProd = (extra) => ({
-	startDateInProduction: '2025-01-01',
-	startDateOutPhased: '',
-	...extra,
-})
+function inProd(extra) {
+	return {
+		startDateInProduction: '2025-01-01',
+		startDateOutPhased: '',
+		...extra,
+	}
+}
 
 // Usages: M1 deployed twice (O1, O2); M2 once (O1); M3 once (O1); M4 phased out (O1).
 const usages = [

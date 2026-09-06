@@ -63,7 +63,7 @@ class ModerationService {
 	/**
 	 * The review moderated catalog object type.
 	 */
-	public const MODERATED_TYPE_REVIEW = 'assessment';
+	public const MODERATED_TYPE_REVIEW = 'software-review';
 
 	/**
 	 * Pending (awaiting moderation) state — shared field value across types.

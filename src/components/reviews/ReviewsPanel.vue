@@ -152,7 +152,7 @@ export default {
 			default: '',
 		},
 
-		/** 'module' or 'service' — set per-page in src/manifest.json. */
+		/** 'module' or 'catalogService' — set per-page in src/manifest.json. */
 		subjectType: {
 			type: String,
 			default: 'module',

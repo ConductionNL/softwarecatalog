@@ -72,12 +72,12 @@ describe('facets store — filter/search state', () => {
 		expect(store.module.search).toBe('zaak')
 	})
 
-	it('module and dienst state are independent', () => {
+	it('module and catalogService state are independent', () => {
 		const store = useFacetStore()
 		store.setFilter('module', 'referenceComponent', ['A'])
-		store.setFilter('service', 'referenceComponent', ['B'])
+		store.setFilter('catalogService', 'referenceComponent', ['B'])
 		expect(store.module.activeFilters.referenceComponent).toEqual(['A'])
-		expect(store.service.activeFilters.referenceComponent).toEqual(['B'])
+		expect(store.catalogService.activeFilters.referenceComponent).toEqual(['B'])
 	})
 })
 
@@ -165,16 +165,19 @@ describe('facets store — URL query round-trip (_gf_ prefixed keys)', () => {
 
 	it('round-trips filtersToQuery -> setFiltersFromQuery', () => {
 		const store = useFacetStore()
-		store.setFilter('service', 'domain', ['Bedrijfsvoering', 'Dienstverlening'])
-		store.setSearch('service', 'stuf')
+		store.setFilter('catalogService', 'domain', [
+			'Bedrijfsvoering',
+			'Dienstverlening',
+		])
+		store.setSearch('catalogService', 'stuf')
 
-		const query = store.filtersToQuery('service')
-		store.setFiltersFromQuery('service', query)
+		const query = store.filtersToQuery('catalogService')
+		store.setFiltersFromQuery('catalogService', query)
 
-		expect(store.service.activeFilters).toEqual({
+		expect(store.catalogService.activeFilters).toEqual({
 			domain: ['Bedrijfsvoering', 'Dienstverlening'],
 		})
-		expect(store.service.search).toBe('stuf')
+		expect(store.catalogService.search).toBe('stuf')
 	})
 })
 

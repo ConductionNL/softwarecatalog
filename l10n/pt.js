@@ -278,7 +278,12 @@ OC.L10N.register(
         "Stale": "Stale",
         "Subscribe to peer catalogs and pull their published entries into this instance.": "Subscribe to peer catalogs and pull their published entries into this instance.",
         "Subscribed peers": "Subscribed peers",
-        "There are no pending registrations right now.": "There are no pending registrations right now."
+        "There are no pending registrations right now.": "There are no pending registrations right now.",
+        "Reports": "Relatórios",
+        "Pick a report to open it.": "Escolha um relatório para o abrir.",
+        "Overlapping and ageing software across the portfolio.": "Software sobreposto e antigo no portefólio.",
+        "Store": "Loja",
+        "Install catalogue configurations that other organisations have published: a way of describing software, or the flows that keep an entry current.": "Instale registos, esquemas e fluxos publicados por outras organizações."
     },
     "nplurals=2; plural=(n != 1);"
 )

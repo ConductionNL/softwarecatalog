@@ -119,16 +119,32 @@ class SettingsService {
 	 * @var array<string, string>
 	 */
 	public const LEGACY_SCHEMA_KEY = [
-		'assessment' => 'beoordeeling_schema',
+		'software-review' => 'beoordeeling_schema',
+		// Not a Dutch-to-English legacy key like the rest, but the same
+		// mechanism: `contract` collided with shillinq's and pipelinq's, all
+		// three carrying `contractNumber`, so shillinq owns the contract and
+		// this became the catalogue facet. The config KEY stays
+		// `contract_schema` because it is live persisted state, and without
+		// this entry the default `<type>_schema` rule would look for
+		// `catalogContract_schema` and resolve nothing.
+		'catalogContract' => 'contract_schema',
 		'bioMeasure' => 'bioMaatregel_schema',
 		'connection' => 'koppeling_schema',
 		'contactPerson' => 'contactpersoon_schema',
 		'moduleVersion' => 'moduleVersie_schema',
 		'organization' => 'organisatie_schema',
-		'service' => 'dienst_schema',
+		'catalogService' => 'dienst_schema',
 		'usage' => 'gebruik_schema',
 		'vulnerability' => 'kwetsbaarheid_schema',
 	];
+
+	/**
+	 * OpenRegister's shared organisation projection.
+	 *
+	 * `nc-` prefixed by OpenRegister so it cannot collide with a leaf app's own
+	 * `organization`, which has to keep working until every app has migrated.
+	 */
+	private const SHARED_ORGANISATION_SCHEMA = 'nc-organisation';
 
 	/**
 	 * SettingsService constructor
@@ -293,14 +309,14 @@ class SettingsService {
 				'objectTypes' => [
 					'sector',
 					'suite',
-					'service',
+					'catalogService',
 					'vulnerability',
 					'contactPerson',
 					'organization',
 					'usage',
-					'contract',
+					'catalogContract',
 					'connection',
-					'assessment',
+					'software-review',
 					'module',
 					'compliancy',
 					'moduleVersion',
@@ -719,11 +735,14 @@ class SettingsService {
 
 			$registerId = (string)$publicationRegister->getId();
 
-			// Find page, menu, and theme schemas that have data in magic mapper tables.
-			// We look for schemas by slug and check if they have associated data.
+			// Find the theme schema that has data in magic mapper tables.
+			//
+			// `page` and `menu` were here too, until opencatalogi retired its CMS
+			// and those moved to Portaliq. Writing `page_schema` / `menu_schema`
+			// into opencatalogi's app config now points it at schemas that no
+			// longer exist there, which reads as a configured integration and
+			// resolves to nothing.
 			$schemas = $schemaMapper->findAll();
-			$pageSchemaId = null;
-			$menuSchemaId = null;
 			$themeSchemaId = null;
 
 			foreach ($schemas as $schema) {
@@ -734,15 +753,7 @@ class SettingsService {
 				$tableName = 'oc_openregister_table_' . $registerId . '_' . $schemaId;
 
 				// Try to find schemas that have actual data.
-				if ($slug === 'page' && $pageSchemaId === null) {
-					if ($this->tableHasData(tableName: $tableName) === true) {
-						$pageSchemaId = (string)$schemaId;
-					}
-				} elseif ($slug === 'menu' && $menuSchemaId === null) {
-					if ($this->tableHasData(tableName: $tableName) === true) {
-						$menuSchemaId = (string)$schemaId;
-					}
-				} elseif ($slug === 'theme' && $themeSchemaId === null) {
+				if ($slug === 'theme' && $themeSchemaId === null) {
 					if ($this->tableHasData(tableName: $tableName) === true) {
 						$themeSchemaId = (string)$schemaId;
 					}
@@ -751,20 +762,6 @@ class SettingsService {
 
 			// Set the opencatalogi app configuration.
 			$configured = [];
-
-			if ($pageSchemaId !== null) {
-				$this->config->setValueString('opencatalogi', 'page_schema', $pageSchemaId);
-				$this->config->setValueString('opencatalogi', 'page_register', $registerId);
-				$configured['page_schema'] = $pageSchemaId;
-				$configured['page_register'] = $registerId;
-			}
-
-			if ($menuSchemaId !== null) {
-				$this->config->setValueString('opencatalogi', 'menu_schema', $menuSchemaId);
-				$this->config->setValueString('opencatalogi', 'menu_register', $registerId);
-				$configured['menu_schema'] = $menuSchemaId;
-				$configured['menu_register'] = $registerId;
-			}
 
 			if ($themeSchemaId !== null) {
 				$this->config->setValueString('opencatalogi', 'theme_schema', $themeSchemaId);
@@ -907,10 +904,10 @@ class SettingsService {
 			// (`koppeling_gebruik_schema`). Renaming a subset would resolve some
 			// types and silently leave others reporting "not configured", which is
 			// how the ratings feature died once already. Tracked as its own change.
-			'assessment' => 'beoordeeling_schema',
-			'service' => 'dienst_schema',
+			'software-review' => 'beoordeeling_schema',
+			'catalogService' => 'dienst_schema',
 			'usage' => 'gebruik_schema',
-			'contract' => 'contract_schema',
+			'catalogContract' => 'contract_schema',
 			'connection' => 'koppeling_schema',
 			'suite' => 'suite_schema',
 			'vulnerability' => 'kwetsbaarheid_schema',
@@ -942,6 +939,26 @@ class SettingsService {
 			if (empty($schemaId) === false) {
 				$result = (int)$schemaId;
 			}
+		}
+
+		// LAST, deliberately. The organisation is OpenRegister's now — a schema
+		// slug is global per organisation, so this app shipping its own
+		// `organization` is what collided with opencatalogi's — and
+		// `nc-organisation` is the projection every app shares.
+		//
+		// But it resolves only when nothing local did. Putting it FIRST was the
+		// obvious shape and the wrong one: the projection always exists, so it
+		// would win on an instance that has not yet run
+		// `openregister:organisations:adopt`, and that instance's rows still
+		// live in the local schema. Every picker would come back empty with
+		// nothing reporting why.
+		//
+		// This ordering needs no operator timing. An un-migrated instance keeps
+		// resolving locally; a fresh install has no local schema and lands on the
+		// projection; and once `prune-retired` has removed the local schema, so
+		// does a migrated one.
+		if ($result === null && $objectType === 'organization') {
+			$result = $this->sharedOrganisationSchemaId();
 		}
 
 		if ($objectType === 'contactPerson' && $result === null) {
@@ -1011,6 +1028,46 @@ class SettingsService {
 
 		return $result;
 	}//end getSchemaIdForObjectType()
+
+	/**
+	 * The id of OpenRegister's shared organisation projection, or null.
+	 *
+	 * `nc-organisation` is a read-only virtual schema OpenRegister serves from
+	 * its always-available `directory` register, alongside `nc-user` and
+	 * `nc-group`. Every app can reference it, which is the point: this app
+	 * shipping its own `organization` schema is what collided with
+	 * opencatalogi's, since a schema slug is global per organisation.
+	 *
+	 * Resolved lazily and failing to null, because an OpenRegister too old to
+	 * carry the projection must fall through to this app's own schema rather
+	 * than resolving organisations to nothing.
+	 *
+	 * @return int|null The schema id, or null when it cannot be resolved.
+	 *
+	 * @spec openspec/changes/stackiq-uses-the-shared-organisation/specs/shared-organisation/spec.md#requirement-the-organisation-is-openregisters-req-sso-101
+	 */
+	private function sharedOrganisationSchemaId(): ?int {
+		if ($this->isOpenRegisterInstalled() === false) {
+			return null;
+		}
+
+		try {
+			$schemaMapper = $this->container->get('OCA\\OpenRegister\\Db\\SchemaMapper');
+			$schema = $schemaMapper->find(self::SHARED_ORGANISATION_SCHEMA);
+		} catch (\Throwable $e) {
+			$this->logger->debug(
+				'SettingsService: the shared organisation projection is unavailable',
+				['error' => $e->getMessage()]
+			);
+			return null;
+		}
+
+		if ($schema === null) {
+			return null;
+		}
+
+		return (int)$schema->getId();
+	}//end sharedOrganisationSchemaId()
 
 	/**
 	 * The app-config key an object type's schema id is stored under.
@@ -4032,14 +4089,14 @@ class SettingsService {
 			$expectedSlugs = [
 				'sector',
 				'suite',
-				'service',
+				'catalogService',
 				'vulnerability',
 				'contactPerson',
 				'organization',
 				'usage',
-				'contract',
+				'catalogContract',
 				'connection',
-				'assessment',
+				'software-review',
 				'module',
 				'compliancy',
 				'moduleversie',
@@ -4138,12 +4195,12 @@ class SettingsService {
 				'organization' => 'organisatie_schema',
 				'contactPerson' => 'contactpersoon_schema',
 				'suite' => 'suite_schema',
-				'service' => 'dienst_schema',
+				'catalogService' => 'dienst_schema',
 				'vulnerability' => 'kwetsbaarheid_schema',
 				'usage' => 'gebruik_schema',
-				'contract' => 'contract_schema',
+				'catalogContract' => 'contract_schema',
 				'connection' => 'koppeling_schema',
-				'assessment' => 'beoordeeling_schema',
+				'software-review' => 'beoordeeling_schema',
 				'module' => 'module_schema',
 				'compliancy' => 'compliancy_schema',
 				'moduleversie' => 'moduleVersie_schema',

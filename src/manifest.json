@@ -12,11 +12,21 @@
 				},
 				{
 					"id": "demo-data",
-					"type": "run-action",
-					"action": "install-demo-data",
-					"title": "Demo data (optional)",
+					"type": "choice",
+					"display": "cards",
+					"optionsSource": "datasets",
+					"configKey": "demo_dataset",
+					"title": "Load example data?",
 					"required": false,
-					"body": "Load a small example dataset so the lists, detail pages and dashboards show a working product straight away. The data is obviously sample data, it is safe to run more than once, and it can be removed afterwards. Skip this on a production install."
+					"body": "Example data fills the lists, detail pages and dashboards so you can see the app working straight away. Pick \"None\" on a production install."
+				},
+				{
+					"id": "load-demo-data",
+					"type": "run-action",
+					"action": "load-demo-data",
+					"title": "Load the example data",
+					"required": false,
+					"body": "Loads what you picked. The data is obviously sample data, it is safe to run more than once, and you can delete it afterwards."
 				},
 				{
 					"id": "done",
@@ -48,6 +58,14 @@
 				]
 			}
 		]
+	},
+	"store": {
+	  "_note": "Configuration exchange, not rows. A configuration set carries the registers, schemas, objects, views, flows, sources and mappings that make one way of working hold together. There is deliberately NO `installable` allowlist: a set exists to introduce schemas the instance does not have YET, so listing schemas this app already owns would refuse exactly the sets worth installing. The trust boundary for a bundle is its publisher, enforced by the engine's source allowlist and trusted-key check. \u26a0\ufe0f An EMPTY `installable` means install NOTHING, not install anything \u2014 omitting the key and declaring an empty list are different things.",
+	  "types": [
+	    "openregister.configset",
+	    "openregister.flows"
+	  ],
+	  "localRegister": "stackiq"
 	},
 	"menu": [
 		{
@@ -162,13 +180,6 @@
 			"order": 86
 		},
 		{
-			"id": "PortfolioReport",
-			"label": "Portfolio rationalization",
-			"icon": "BriefcaseOutline",
-			"route": "PortfolioReport",
-			"order": 87
-		},
-		{
 			"id": "Documentation",
 			"label": "Documentation",
 			"icon": "BookOpenVariantOutline",
@@ -177,12 +188,28 @@
 			"order": 90
 		},
 		{
+		  "id": "StoreMenu",
+		  "label": "Store",
+		  "icon": "StoreOutline",
+		  "route": "Store",
+		  "section": "footer",
+		  "order": 92
+		},
+		{
+			"id": "ReportsMenu",
+			"label": "Reports",
+			"icon": "ChartBoxOutline",
+			"route": "Reports",
+			"section": "footer",
+			"order": 95
+		},
+		{
 			"id": "FeaturesRoadmapMenu",
 			"label": "Features & roadmap",
 			"icon": "MapMarkerPath",
 			"route": "FeaturesRoadmap",
 			"section": "footer",
-			"order": 95
+			"order": 100
 		},
 		{
 			"id": "FlowsMenu",
@@ -195,12 +222,165 @@
 	],
 	"pages": [
 		{
+		  "id": "Store",
+		  "route": "/store",
+		  "type": "store",
+		  "title": "Store",
+		  "config": {
+		    "app": "stackiq",
+		    "title": "Store",
+		    "description": "Install catalogue configurations that other organisations have published: a way of describing software, or the flows that keep an entry current."
+		  },
+		  "_note": "ADR-114 Decision 4 / ADR-080. Declarative: openregister hosts the store plane, so this app writes NO store controller. With no registry configured the page renders the app's built-in items and makes NO network call."
+		},
+		{
 			"id": "Dashboard",
 			"route": "/",
-			"type": "custom",
+			"type": "dashboard",
 			"title": "Dashboard",
-			"component": "DashboardCustomView",
-			"_note": "Bespoke landing dashboard: composes CnDashboardPage with hand-authored named widget slots (a management info-box with deep-links and two custom statistics tables that render per-object-type counts with inline navigation). No standard dashboard config expresses these non-KPI slot bodies."
+			"config": {
+				"widgets": [
+					{
+						"id": "kpi-organisations",
+						"type": "stat",
+						"title": "Organisaties",
+						"content": {
+							"label": "Organisaties",
+							"icon": "OfficeBuilding",
+							"route": {
+								"name": "Organisaties"
+							},
+							"format": {
+								"style": "decimal",
+								"decimals": 0
+							},
+							"source": {
+								"register": "@resolve:voorzieningen_register",
+								"schema": "organization",
+								"metric": "count"
+							}
+						}
+					},
+					{
+						"id": "kpi-modules",
+						"type": "stat",
+						"title": "Modules",
+						"content": {
+							"label": "Modules",
+							"icon": "Package",
+							"route": {
+								"name": "Modules"
+							},
+							"format": {
+								"style": "decimal",
+								"decimals": 0
+							},
+							"source": {
+								"register": "@resolve:voorzieningen_register",
+								"schema": "module",
+								"metric": "count"
+							}
+						}
+					},
+					{
+						"id": "kpi-services",
+						"type": "stat",
+						"title": "Services",
+						"content": {
+							"label": "Services",
+							"icon": "Web",
+							"route": {
+								"name": "Diensten"
+							},
+							"format": {
+								"style": "decimal",
+								"decimals": 0
+							},
+							"source": {
+								"register": "@resolve:voorzieningen_register",
+								"schema": "catalogService",
+								"metric": "count"
+							}
+						}
+					},
+					{
+						"id": "kpi-contracts",
+						"type": "stat",
+						"title": "Contracten",
+						"content": {
+							"label": "Contracten",
+							"icon": "FileDocument",
+							"route": {
+								"name": "Contracten"
+							},
+							"format": {
+								"style": "decimal",
+								"decimals": 0
+							},
+							"source": {
+								"register": "@resolve:voorzieningen_register",
+								"schema": "catalogContract",
+								"metric": "count"
+							}
+						}
+					},
+					{
+						"id": "catalog-panels",
+						"type": "catalog-panels",
+						"title": "Object statistics",
+						"_note": "The management info-box and the two per-object-type statistics tables, moved out of the former hand-written Dashboard view into src/components/CatalogPanels.vue. Registered as a widget TYPE via registerDashboardWidget() in main.js: CnDashboardPage resolves a widget's type against the LIBRARY catalog, not the app registry, and an unregistered type renders 'Widget not available' silently."
+					}
+				],
+				"layout": [
+					{
+						"id": "1",
+						"widgetId": "kpi-organisations",
+						"gridX": 0,
+						"gridY": 0,
+						"gridWidth": 3,
+						"gridHeight": 2,
+						"showTitle": false
+					},
+					{
+						"id": "2",
+						"widgetId": "kpi-modules",
+						"gridX": 3,
+						"gridY": 0,
+						"gridWidth": 3,
+						"gridHeight": 2,
+						"showTitle": false
+					},
+					{
+						"id": "3",
+						"widgetId": "kpi-services",
+						"gridX": 6,
+						"gridY": 0,
+						"gridWidth": 3,
+						"gridHeight": 2,
+						"showTitle": false
+					},
+					{
+						"id": "4",
+						"widgetId": "kpi-contracts",
+						"gridX": 9,
+						"gridY": 0,
+						"gridWidth": 3,
+						"gridHeight": 2,
+						"showTitle": false
+					},
+					{
+						"id": "5",
+						"widgetId": "catalog-panels",
+						"gridX": 0,
+						"gridY": 2,
+						"gridWidth": 12,
+						"gridHeight": 8,
+						"showTitle": false,
+						"borderless": true
+					}
+				]
+			},
+			"_note": "Was type:'custom' rendering a bespoke view. The four KPI tiles are declarative `stat` widgets counted by OpenRegister; the non-KPI slot bodies live on as the `catalog-panels` widget."
 		},
 		{
 			"id": "Organisaties",
@@ -230,10 +410,10 @@
 				"_note": "ADR-062 rollout (round 2): this page did not exist before — organisatie objects (vendors, municipalities, collaborations) were only reachable as index cards with no detail view (codeberg softwarecatalog#76). Vendor/organisation archetype: the organisatie schema itself carries only catalogue-role fields (contactsUid, type, status, registratiestatus, samenwerkingtype, geregistreerdDoor, publicatie dates) because identity (name, website, e-mail, KvK) lives in the linked Nextcloud contact via contactsUid, not on this OR object — so the body leads with those 8 catalogue fields (2-col) rather than name/address. Top-right: a stats-block KPI card counting the organisation's own diensten, modules and contactpersonen (all FK-scoped via aanbieder/organisatie = @objectId) so a reader sees portfolio size at a glance without opening any list. Below: three FK object-lists — Services (dienst.aanbieder) and Applications (module.aanbieder) are the org's supply-side offerings; Contact persons (contactpersoon.organisatie) links to the existing ContactpersoonDetail page. Services still have no dedicated index/detail page (a real fleet gap, follow-up remains). Applications now do — bio-compliance-assessment added Modules/ModuleDetail (BBN level and DPIA tracking needed somewhere to live), so org-modules now carries `rowRoute: ModuleDetail` and a bbnLevel column; org-diensten's rowRoute stays intentionally omitted. An organisation does not communicate itself (contact happens through the linked NC contact), so per the comms hard-rule NO Emails/Meetings widgets appear. Audit trail stays a sidebar tab. Card-click navigation from the Organisaties index required a matching fix in OrganisatieCard.vue (the custom cardComponent never emitted the `click` event CnCardGrid/CnPageRenderer listen on for register+schema route resolution — clicking a card was previously a no-op).",
 				"widgets": [
 					{ "id": "org-data", "type": "data", "title": "Organisation", "icon": "OfficeBuilding", "content": { "columns": 2, "include": [ "contactsUid", "type", "status", "registrationStatus", "samenwerkingtype", "registeredBy", "publicationDate", "depublicationDate" ], "overrides": { "status": { "editable": false }, "registeredBy": { "editable": false } } } },
-					{ "id": "org-stats-services", "type": "stats-block", "title": "Services", "icon": "ChartBar", "content": { "entries": [ { "title": "Services", "register": "@resolve:voorzieningen_register", "schema": "service", "metric": "count", "filter": { "provider": "@objectId" } } ] } },
+					{ "id": "org-stats-services", "type": "stats-block", "title": "Services", "icon": "ChartBar", "content": { "entries": [ { "title": "Services", "register": "@resolve:voorzieningen_register", "schema": "catalogService", "metric": "count", "filter": { "provider": "@objectId" } } ] } },
 					{ "id": "org-stats-applications", "type": "stats-block", "title": "Applications", "icon": "ChartBar", "content": { "entries": [ { "title": "Applications", "register": "@resolve:voorzieningen_register", "schema": "module", "metric": "count", "filter": { "provider": "@objectId" } } ] } },
 					{ "id": "org-stats-contact-persons", "type": "stats-block", "title": "Contact persons", "icon": "ChartBar", "content": { "entries": [ { "title": "Contact persons", "register": "@resolve:voorzieningen_register", "schema": "contactPerson", "metric": "count", "filter": { "organization": "@objectId" } } ] } },
-					{ "id": "org-diensten", "type": "object-list", "title": "Services", "icon": "HandshakeOutline", "content": { "register": "@resolve:voorzieningen_register", "schema": "service", "filter": { "provider": "@objectId" }, "columns": [ { "key": "type", "label": "Type" } ], "limit": 25, "emptyText": "No services registered for this organisation yet" } },
+					{ "id": "org-diensten", "type": "object-list", "title": "Services", "icon": "HandshakeOutline", "content": { "register": "@resolve:voorzieningen_register", "schema": "catalogService", "filter": { "provider": "@objectId" }, "columns": [ { "key": "type", "label": "Type" } ], "limit": 25, "emptyText": "No services registered for this organisation yet" } },
 					{ "id": "org-modules", "type": "object-list", "title": "Applications", "icon": "Package", "content": { "register": "@resolve:voorzieningen_register", "schema": "module", "filter": { "provider": "@objectId" }, "columns": [ { "key": "licentietype", "label": "License type" }, { "key": "bbnLevel", "label": "BBN level" } ], "limit": 25, "rowRoute": "ModuleDetail", "emptyText": "No applications registered for this organisation yet" } },
 					{ "id": "org-contactpersonen", "type": "object-list", "title": "Contact persons", "icon": "AccountGroup", "content": { "register": "@resolve:voorzieningen_register", "schema": "contactPerson", "filter": { "organization": "@objectId" }, "columns": [ { "key": "role", "label": "Function" }, { "key": "roles", "label": "Roles" } ], "limit": 25, "rowRoute": "ContactpersoonDetail", "emptyText": "No contact persons linked to this organisation yet" } }
 				],
@@ -350,7 +530,7 @@
 			"title": "Contracts",
 			"config": {
 				"register": "@resolve:voorzieningen_register",
-				"schema": "contract",
+				"schema": "catalogContract",
 				"columns": [
 					"contractNumber",
 					"contractType",
@@ -379,10 +559,10 @@
 			"title": "Contract",
 			"config": {
 				"register": "@resolve:voorzieningen_register",
-				"schema": "contract",
+				"schema": "catalogContract",
 				"_note": "Document / agreement archetype. The reader of a contract needs terms and money up front, then the paperwork. Body: contract data (number, type, start/end dates, cost + period, status, both nested contact persons, documentReferentie, remarks) spans 8-wide top-left; a Documents (files) panel spans 4-wide full-height on the right because the signed contract, addenda and evidence are the primary attachments. Below the data, a Related panel links the contract's service (dienst) and usage (gebruik). A KPI stat surfaces the contract value at a glance. The contract schema declares NO email/calendar linkedType, so per the comms hard-rule NO Emails/Meetings widgets appear on the body (circulation happens via the linked Nextcloud contacts, not the catalogue record). Per the sidebar hard rule, the ContractApprovalPanel (decidesk-delegated approval workflow — a per-record action, not primary reading) moved OUT of the sidebar into a declarative body section (config.bodyWidgets, placed after the related row) so the sidebar stays audit-only. FIX (softwarecatalog audit): the panel previously rendered bare below the grid (CnBodySections gives a section only a plain `<h3>`, no card chrome) — ContractApprovalPanel now wraps its own content in CnWidgetWrapper (title + CheckCircleOutline icon), matching the chrome every other body widget carries; the now-redundant bodyWidgets `title` was dropped so the h3 doesn't duplicate it. Layout also reworked: ct-data (Contract details) now anchors gridX0/gridY0 spanning the full grid height so no whitespace hole sits between the KPI stat and the Files panel, ct-value moved to the top of the right column above ct-files, and ct-data's height was bumped from 5 to 7 (9 scalar contract fields at 2 columns need 5 rows; height5 was clipping the last row).",
 				"widgets": [
-					{ "id": "ct-value", "type": "stat", "title": "Contract value", "icon": "CurrencyEur", "content": { "label": "Contract value", "format": "currency", "source": { "register": "@resolve:voorzieningen_register", "schema": "contract", "metric": "sum", "field": "cost", "filter": { "id": "@objectId" } } } },
+					{ "id": "ct-value", "type": "stat", "title": "Contract value", "icon": "CurrencyEur", "content": { "label": "Contract value", "format": "currency", "source": { "register": "@resolve:voorzieningen_register", "schema": "catalogContract", "metric": "sum", "field": "cost", "filter": { "id": "@objectId" } } } },
 					{ "id": "ct-data", "type": "data", "title": "Contract details", "icon": "FileSign", "content": { "columns": 2 } },
 					{ "id": "ct-files", "type": "integration", "integrationId": "files", "title": "Documents", "icon": "FolderOutline" },
 					{ "id": "ct-related", "type": "related", "title": "Service & usage", "icon": "LinkVariant" },
@@ -472,7 +652,7 @@
 			"_note": "Faceted index page (gemma-faceted-search) — see the Modules page's _note; identical component, schema: dienst. GEMMA links are transitive via dienst.modules (FacetService resolves them server-side).",
 			"config": {
 				"register": "@resolve:voorzieningen_register",
-				"schema": "service",
+				"schema": "catalogService",
 				"description": "Browse the service (dienst) catalogue, filtered by GEMMA architecture dimension.",
 				"columns": [
 					"name",
@@ -628,7 +808,7 @@
 			"title": "Reviews",
 			"config": {
 				"register": "@resolve:voorzieningen_register",
-				"schema": "assessment",
+				"schema": "software-review",
 				"columns": [
 					"name",
 					"auteur",
@@ -649,10 +829,10 @@
 			"title": "Review",
 			"config": {
 				"register": "@resolve:voorzieningen_register",
-				"schema": "assessment",
+				"schema": "software-review",
 				"_note": "Review / assessment archetype (beoordeeling). A review is read for its verdict then its subject: body leads with the review data (name, short + long markdown description, score) 8-wide left, a prominent score stat (waardering) top-right, and a Related panel + supporting-evidence Files panel stacked beneath it surfacing the reviewed subjects — the beoordeeling links modules[], diensten[] and koppelingen[] (the things assessed) plus its gebruik context. A review does not communicate, so per the comms hard-rule NO Emails/Meetings widgets appear. Audit trail stays a sidebar tab. FIX (softwarecatalog audit): rv-data (Review) now anchors gridX0/gridY0 so the left column starts flush with the right column instead of a whitespace hole opening up beside the score stat; rv-score/rv-related/rv-files were re-stacked in the right column to match rv-data's height. rv-related's title shortened from 'Reviewed modules & services' (truncated to 'Reviewed modules & s…' in the widget header) to 'Reviewed modules'.",
 				"widgets": [
-					{ "id": "rv-score", "type": "stat", "title": "Rating", "icon": "Star", "content": { "label": "Rating", "icon": "Star", "source": { "register": "@resolve:voorzieningen_register", "schema": "assessment", "metric": "avg", "field": "rating", "filter": { "id": "@objectId" } } } },
+					{ "id": "rv-score", "type": "stat", "title": "Rating", "icon": "Star", "content": { "label": "Rating", "icon": "Star", "source": { "register": "@resolve:voorzieningen_register", "schema": "software-review", "metric": "avg", "field": "rating", "filter": { "id": "@objectId" } } } },
 					{ "id": "rv-data", "type": "data", "title": "Review", "icon": "NoteTextOutline", "content": { "columns": 2 } },
 					{ "id": "rv-related", "type": "related", "title": "Reviewed modules", "icon": "LinkVariant" },
 					{ "id": "rv-files", "type": "integration", "integrationId": "files", "title": "Supporting evidence", "icon": "FolderOutline" }
@@ -836,6 +1016,25 @@
 			"title": "Portfolio roadmap",
 			"component": "LifecycleRoadmapView",
 			"_note": "Per-organisation roadmap: the selected organisation's applications-in-use grouped into derived lifecycle-phase swimlanes (Onbekend first) and ordered within each lane by nearest urgency (end-of-support / phase-out / planned replacement). No standard index/roadmap type derives and groups by computed lifecycle phase."
+		},
+		{
+			"id": "Reports",
+			"route": "/reports",
+			"type": "reports",
+			"title": "Reports",
+			"config": {
+				"description": "Pick a report to open it.",
+				"cards": [
+					{
+						"id": "PortfolioReport",
+						"label": "Portfolio rationalization",
+						"description": "Overlapping and ageing software across the portfolio.",
+						"icon": "BriefcaseOutline",
+						"route": "PortfolioReport"
+					}
+				]
+			},
+			"_note": "ADR-112 / ADR-114 Decision 3. Stackiq already had one report and it was a main-nav entry at order 87. Nothing is invented: the PortfolioReport page is untouched and stays routable at /portfolio-report, and only its menu entry moves. The catalogue index pages are NOT carded — they are the data itself, not a reading of it, and ADR-097 keeps a domain of the work in the main nav."
 		},
 		{
 			"id": "PortfolioReport",

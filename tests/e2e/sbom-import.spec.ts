@@ -42,17 +42,19 @@
  * `cyclonedx-1.5-valid.json`) is uploaded through the real file input.
  */
 
-import { test, expect, type Page } from '@playwright/test'
+import type { Page } from '@playwright/test'
+
+import { expect, test } from '@playwright/test'
 import * as path from 'path'
+import { APP_PATH } from './base-url.ts'
+import { dismissWalkthrough } from './spec-coverage/_helpers.ts'
 import {
+	cleanupByToken,
+	createObject,
 	newApiContext,
 	resolveConfig,
-	createObject,
-	cleanupByToken,
 	RUN_ID,
-} from './workflows/_fixtures'
-import { dismissWalkthrough } from './spec-coverage/_helpers'
-import { APP_PATH } from './base-url'
+} from './workflows/_fixtures.ts'
 
 const FIXTURES_DIR = path.resolve(__dirname, '../fixtures/sbom')
 const CYCLONEDX_16 = path.join(FIXTURES_DIR, 'cyclonedx-1.6-valid.json') // 3 components
@@ -109,7 +111,7 @@ async function openComponentsTab(page: Page): Promise<void> {
 	// tests/e2e/base-url.ts. `domcontentloaded`, not `networkidle`: the SPA keeps
 	// a background poll alive so the network never goes idle; the app-root wait
 	// below is the real readiness signal.
-	await page.goto(`${APP_PATH}/#/moduleversies/${moduleVersieId}`, {
+	await page.goto(`${APP_PATH}/moduleversies/${moduleVersieId}`, {
 		waitUntil: 'domcontentloaded',
 	})
 	await page
@@ -122,11 +124,18 @@ async function openComponentsTab(page: Page): Promise<void> {
 	// The detail page mounts with its right-hand sidebar collapsed, and the
 	// Components / History tabs live INSIDE that sidebar — present in the DOM but
 	// not visible, so a direct tab click waits forever. Open the sidebar first.
-	const openSidebar = page.getByRole('button', { name: 'Open sidebar' })
+	const openSidebar = page.getByRole('button', {
+		name: /Open sidebar|Zijbalk openen/i,
+	})
 	if (await openSidebar.isVisible().catch(() => false)) {
 		await openSidebar.click()
 	}
-	await page.getByRole('tab', { name: 'Components' }).click()
+	// The e2e instance runs DUTCH. The manifest labels this tab "Components"
+	// and l10n/nl.json maps it to "Componenten", so pinning the English source
+	// waits for a tab that never appears and the test dies on a 60s timeout
+	// that reads like a missing feature. Matching either spelling keeps the
+	// spec honest on both locales.
+	await page.getByRole('tab', { name: /Components|Componenten/i }).click()
 }
 
 // ---------------------------------------------------------------------------

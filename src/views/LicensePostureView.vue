@@ -210,7 +210,7 @@ export default {
 			'module',
 			'usage',
 			'organization',
-			'contract',
+			'catalogContract',
 		])
 		return {}
 	},
@@ -250,7 +250,7 @@ export default {
 		 * @spec openspec/specs/software-license-posture/spec.md
 		 */
 		contracts() {
-			return objectStore.getCollection('contract')?.results || []
+			return objectStore.getCollection('catalogContract')?.results || []
 		},
 
 		/**
@@ -429,7 +429,7 @@ export default {
 					this.fetchType('module'),
 					this.fetchType('usage'),
 					this.fetchType('organization'),
-					this.fetchType('contract'),
+					this.fetchType('catalogContract'),
 				])
 			} catch (error) {
 				console.error('LicensePostureView: failed to load data', error)

@@ -23,11 +23,10 @@
  *    = POST, deleteObject = DELETE on `/api/objects/{register}/{schema}[/{id}]`).
  */
 
-import {
-	request as playwrightRequest,
-	type APIRequestContext,
-} from '@playwright/test'
-import { resolveBaseUrl } from '../base-url'
+import type { APIRequestContext } from '@playwright/test'
+
+import { request as playwrightRequest } from '@playwright/test'
+import { resolveBaseUrl } from '../base-url.ts'
 
 // Re-exported from the single central resolver (tests/e2e/base-url.ts). These
 // fixtures CREATE organisations and contracts, so a `localhost:8080` fallback
@@ -127,7 +126,7 @@ export async function deleteObject(
 	)
 	if (!res.ok() && res.status() !== 404) {
 		// Non-fatal during cleanup; log only.
-		// eslint-disable-next-line no-console
+
 		console.warn(
 			`deleteObject(${register}/${schema}/${id}) returned ${res.status()}`,
 		)

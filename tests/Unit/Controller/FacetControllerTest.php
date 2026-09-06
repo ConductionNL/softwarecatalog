@@ -78,7 +78,7 @@ class FacetControllerTest extends TestCase {
 
 		$facetService = $this->createMock(FacetService::class);
 		$facetService->method('getFacets')->willThrowException(
-			new \InvalidArgumentException('Unsupported facet schema "contract". Supported schemas: module, dienst.')
+			new \InvalidArgumentException('Unsupported facet schema "catalogContract". Supported schemas: module, dienst.')
 		);
 
 		$controller = new FacetController(
@@ -88,12 +88,12 @@ class FacetControllerTest extends TestCase {
 			logger: $this->createMock(LoggerInterface::class)
 		);
 
-		$response = $controller->getFacets('contract');
+		$response = $controller->getFacets('catalogContract');
 
 		$this->assertSame(400, $response->getStatus());
 		$data = $response->getData();
 		$this->assertContains('module', $data['supportedSchemas']);
-		$this->assertContains('service', $data['supportedSchemas']);
+		$this->assertContains('catalogService', $data['supportedSchemas']);
 
 	}//end testGetFacetsReturns400ForUnsupportedSchema()
 

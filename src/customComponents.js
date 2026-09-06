@@ -24,7 +24,6 @@ import ReviewsPanel from './components/reviews/ReviewsPanel.vue'
 import SbomComponentsPanel from './components/sbom/SbomComponentsPanel.vue'
 import VulnerabilityExposurePanel from './components/vulnerabilities/VulnerabilityExposurePanel.vue'
 import ComplianceMatrixView from './views/ComplianceMatrixView.vue'
-import DashboardCustomView from './views/Dashboard.vue'
 import FacetedCatalogIndexView from './views/FacetedCatalogIndexView.vue'
 import KwetsbaarhedenView from './views/KwetsbaarhedenView.vue'
 import LicensePostureView from './views/LicensePostureView.vue'
@@ -48,10 +47,6 @@ export default {
 	StackiqSettingsPage,
 
 	// --- Lib gap: dashboard widget extraction pending. ---
-	// The existing Dashboard.vue (info-box + 2 stats tables) does not yet
-	// fit any built-in widget type. Preserved verbatim until extraction
-	// to a generic schema-stats widget.
-	DashboardCustomView,
 
 	// --- Lib gap: per-organisation lifecycle roadmap. ---
 	// Gebruiken grouped by a DERIVED lifecycle phase (computed from dates, not

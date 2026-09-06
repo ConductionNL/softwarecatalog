@@ -278,7 +278,12 @@ OC.L10N.register(
         "Stale": "Stale",
         "Subscribe to peer catalogs and pull their published entries into this instance.": "Subscribe to peer catalogs and pull their published entries into this instance.",
         "Subscribed peers": "Subscribed peers",
-        "There are no pending registrations right now.": "There are no pending registrations right now."
+        "There are no pending registrations right now.": "There are no pending registrations right now.",
+        "Reports": "Tuarascálacha",
+        "Pick a report to open it.": "Roghnaigh tuarascáil chun í a oscailt.",
+        "Overlapping and ageing software across the portfolio.": "Bogearraí forluiteacha agus ag dul in aois sa phunann.",
+        "Store": "Siopa",
+        "Install catalogue configurations that other organisations have published: a way of describing software, or the flows that keep an entry current.": "Suiteáil cláir, scéimeanna agus sruthanna a d'fhoilsigh eagraíochtaí eile."
     },
     "nplurals=2; plural=(n != 1);"
 )

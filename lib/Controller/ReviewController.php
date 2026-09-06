@@ -67,7 +67,7 @@ class ReviewController extends Controller {
 	 * Submit an authenticated review into the moderation queue.
 	 *
 	 * @param array<string,mixed> $review The review payload (naam, waardering, beschrijvingKort/Lang).
-	 * @param string $subjectType 'module' or 'service'.
+	 * @param string $subjectType 'module' or 'catalogService'.
 	 * @param string $subjectId The uuid of the module/dienst being reviewed.
 	 *
 	 * @return JSONResponse `{ok, uuid, status}` (202 Accepted) or a 400/401.
@@ -102,7 +102,7 @@ class ReviewController extends Controller {
 	 * The approved-only aggregate (average + count) and a bounded list of
 	 * approved reviews for a module or dienst.
 	 *
-	 * @param string $subjectType 'module' or 'service'.
+	 * @param string $subjectType 'module' or 'catalogService'.
 	 * @param string $subjectId The uuid of the module/dienst.
 	 *
 	 * @return JSONResponse `{average, count, items}` or a 400.
