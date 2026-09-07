@@ -5,7 +5,7 @@
  *
  * Pure matching/stamping logic for `eol-feed-integration`. Compares a
  * `moduleVersie.versie` string against the `cycle` values of a mapped
- * module's `eolCycle` rows (already read from OpenRegister by the caller —
+ * module's `eol_cycle` rows (already read from OpenRegister by the caller —
  * this service performs no I/O of its own, OCP or otherwise) and decides,
  * conservatively, whether to stamp `datumEindeOndersteuning` from the
  * matched cycle. A stamp is only produced on an unambiguous single-candidate
@@ -34,7 +34,7 @@ namespace OCA\Stackiq\Service;
 
 /**
  * Conservative version-prefix matcher between `moduleVersie.versie` and
- * `eolCycle.cycle` values, plus PUT-semantic stamp construction.
+ * `eol_cycle.cycle` values, plus PUT-semantic stamp construction.
  *
  * Deliberately has zero OCP/OpenRegister dependencies: every method takes
  * and returns plain PHP arrays/scalars so it is unit-testable with fixture
@@ -57,7 +57,7 @@ class EolMatcherService {
 	 * one candidate remains at that depth.
 	 *
 	 * @param string $version The `moduleVersie.versie` string to match.
-	 * @param array $cycles The mapped module's `eolCycle` rows (each an
+	 * @param array $cycles The mapped module's `eol_cycle` rows (each an
 	 *                      array with at least a `cycle` key).
 	 *
 	 * @return array|null The single unambiguous matching cycle row, or null
@@ -154,7 +154,7 @@ class EolMatcherService {
 	 * omitted from the payload, so the full object must always be the base.
 	 *
 	 * @param array $moduleVersion The complete current `moduleVersie` object.
-	 * @param array $matchedCycle The matched `eolCycle` row (must carry an
+	 * @param array $matchedCycle The matched `eol_cycle` row (must carry an
 	 *                            `eol` date string).
 	 * @param string $source The provenance source identifier (e.g.
 	 *                       `endoflife.date`).
@@ -184,7 +184,7 @@ class EolMatcherService {
 	 * that cycle — nothing informative to stamp).
 	 *
 	 * @param array $moduleVersions The module's `moduleVersie` rows.
-	 * @param array $cycles The mapped module's `eolCycle` rows.
+	 * @param array $cycles The mapped module's `eol_cycle` rows.
 	 * @param string $source The provenance source identifier.
 	 * @param string $fetchedAt The sync run's timestamp (ISO 8601).
 	 *

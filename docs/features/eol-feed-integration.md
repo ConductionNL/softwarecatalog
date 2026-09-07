@@ -18,19 +18,19 @@ Specification:
 
 ## Architecture: stackiq never calls endoflife.date
 
-All fetching of endoflife.date data happens in the sibling **openconnector**
+All fetching of endoflife.date data happens in the sibling **Integriq**
 `endoflife-date-source` change — a Source + Synchronization + Mapping that
-polls `https://endoflife.date/api` and upserts `eolProduct`/`eolCycle`
+polls `https://endoflife.date/api` and upserts `eol_product`/`eol_cycle`
 OpenRegister objects. Softwarecatalog only *reads* those already-ingested
 objects via `ObjectService`; there is no HTTP client, outbound URL
 configuration field, or network call to endoflife.date (or any other EOL
 feed) anywhere in this app's code. This mirrors the pattern established by
 `module-vulnerability-tracking` for CVE enrichment: transport lives in
-openconnector, matching and consumption live in the leaf app.
+Integriq, matching and consumption live in the leaf app.
 
 ```
-openconnector (sibling repo, optional)
-  endoflife-date-source: fetches endoflife.date → eolProduct/eolCycle objects
+Integriq (sibling repo, optional)
+  endoflife-date-source: fetches endoflife.date → eol_product/eol_cycle objects
                           │  read-only, via ObjectService — NO HTTP here
                           ▼
 stackiq (this feature)
@@ -54,7 +54,7 @@ by the matcher — the mapping is strictly opt-in, per product.
 ## Conservative matching — unambiguous only
 
 `EolMatcherService` compares a `moduleVersie.versie` string (e.g. `21.3.1`)
-against the `cycle` values of the mapped module's `eolCycle` rows, using
+against the `cycle` values of the mapped module's `eol_cycle` rows, using
 dot-segment version-prefix matching, most-specific level first:
 
 - `21.3.1` against cycles `21.3` and `21` → matches `21.3` (deeper prefix
@@ -92,7 +92,7 @@ same `EolSyncService::run()`, so they can never drift apart.
 
 ## Graceful degradation
 
-If the configured register/schema cannot be resolved — openconnector's
+If the configured register/schema cannot be resolved — Integriq's
 `endoflife-date-source` change is not installed, the register/schema names
 are wrong, or the feature is simply disabled — `EolSyncService` returns a
 status of `available: false` with a `reason` code, and neither trigger path
@@ -117,10 +117,10 @@ Reason codes surfaced in the settings status panel:
 
 - **Enable EOL feed sync** — off by default; the matcher never reads or
   writes anything while disabled.
-- **Register slug** / **eolProduct schema slug** / **eolCycle schema slug**
-  — pre-filled with the names the openconnector `endoflife-date-source`
-  change provisions (`openconnector` / `eolProduct` / `eolCycle`). Editable
-  without a code change, since openconnector and stackiq are
+- **Register slug** / **eol_product schema slug** / **eol_cycle schema slug**
+  — pre-filled with the names the Integriq `endoflife-date-source`
+  change provisions (`integriq` / `eol_product` / `eol_cycle`). Editable
+  without a code change, since Integriq and stackiq are
   separate release trains and the provisioned names could differ.
 - **Sync interval (minutes)** — how often the scheduled job re-runs
   (minimum enforced: 5 minutes).

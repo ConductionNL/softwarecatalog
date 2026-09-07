@@ -35,6 +35,12 @@ use Psr\Log\LoggerInterface;
  * Round-trips the EOL sync config/status blobs through an in-memory
  * IAppConfig double so the real (non-mocked) SettingsService logic is
  * exercised end to end.
+ *
+ * PHPUnit assertions take positional arguments; the named-parameter sniff does
+ * not apply to them. `phpcs.xml` only scans `lib`, so this file has never been
+ * measured by the gate and carried 34 findings of exactly that shape.
+ *
+ * phpcs:disable CustomSniffs.Functions.NamedParameters
  */
 class SettingsServiceEolConfigTest extends TestCase {
 
@@ -85,9 +91,14 @@ class SettingsServiceEolConfigTest extends TestCase {
 		$config = $service->getEolSyncConfig();
 
 		$this->assertFalse($config['enabled']);
-		$this->assertSame('openconnector', $config['register']);
-		$this->assertSame('eolProduct', $config['productSchema']);
-		$this->assertSame('eolCycle', $config['cycleSchema']);
+		// These three are the slugs Integriq actually provisions today. They
+		// were `openconnector`, `eolProduct` and `eolCycle`; the register moved
+		// in the fleet rename and the two schemas moved to snake_case. A stale
+		// default here does not fail loudly — an unresolvable schema reads as
+		// "this module has no EOL data" — so the assertion is the guard.
+		$this->assertSame('integriq', $config['register']);
+		$this->assertSame('eol_product', $config['productSchema']);
+		$this->assertSame('eol_cycle', $config['cycleSchema']);
 		$this->assertSame(86400, $config['intervalSeconds']);
 	}//end testDefaultsMatchEndoflifeDateSourceProvisioning()
 

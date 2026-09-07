@@ -310,10 +310,9 @@
         "Enable EOL feed sync": "Enable EOL feed sync",
         "When disabled, the matcher never reads or writes anything — the same as the feed being unavailable.": "When disabled, the matcher never reads or writes anything — the same as the feed being unavailable.",
         "Source register and schemas": "Source register and schemas",
-        "Pre-filled with the names the openconnector endoflife-date-source change provisions. Change them if your instance uses different names — no code change required.": "Pre-filled with the names the openconnector endoflife-date-source change provisions. Change them if your instance uses different names — no code change required.",
         "Register slug": "Register slug",
-        "eolProduct schema slug": "eolProduct schema slug",
-        "eolCycle schema slug": "eolCycle schema slug",
+        "eol_product schema slug": "eol_product schema slug",
+        "eol_cycle schema slug": "eol_cycle schema slug",
         "Schedule": "Schedule",
         "Sync interval (minutes)": "Sync interval (minutes)",
         "The scheduled background job re-runs the matcher at this interval; the minimum enforced interval is 5 minutes.": "The scheduled background job re-runs the matcher at this interval; the minimum enforced interval is 5 minutes.",
@@ -329,7 +328,6 @@
         "OpenRegister is not installed": "OpenRegister is not installed",
         "OpenRegister is not currently reachable": "OpenRegister is not currently reachable",
         "the module/moduleVersie schema is not configured yet": "the module/moduleVersie schema is not configured yet",
-        "the configured register or schema could not be found — is the openconnector endoflife-date-source change installed?": "the configured register or schema could not be found — is the openconnector endoflife-date-source change installed?",
         "never": "never",
         "Annualised cost": "Annualised cost",
         "Applications in use": "Applications in use",
@@ -462,6 +460,8 @@
         "No members yet.": "No members yet.",
         "Revoke access": "Revoke access",
         "Close": "Close",
-        "Match catalog products to endoflife.date product cycles ingested via OpenConnector, to keep end-of-support dates data-driven. Stackiq never calls endoflife.date directly.": "Match catalog products to endoflife.date product cycles ingested via OpenConnector, to keep end-of-support dates data-driven. Stackiq never calls endoflife.date directly."
+        "Match catalog products to endoflife.date product cycles ingested via OpenConnector, to keep end-of-support dates data-driven. Stackiq never calls endoflife.date directly.": "Match catalog products to endoflife.date product cycles ingested via OpenConnector, to keep end-of-support dates data-driven. Stackiq never calls endoflife.date directly.",
+        "Pre-filled with the names the Integriq endoflife-date-source change provisions. Change them if your instance uses different names, no code change required.": "Pre-filled with the names the Integriq endoflife-date-source change provisions. Change them if your instance uses different names, no code change required.",
+        "the configured register or schema could not be found. Is the Integriq endoflife-date-source change installed?": "the configured register or schema could not be found. Is the Integriq endoflife-date-source change installed?"
     }
 }
