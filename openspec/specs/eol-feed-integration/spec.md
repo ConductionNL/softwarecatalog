@@ -9,8 +9,8 @@ Each `module` SHALL gain an optional `eolProductSlug` field identifying its
 corresponding endoflife.date product identifier. The EOL matcher SHALL only
 process a module when `eolProductSlug` is set; modules without it SHALL be
 left entirely alone (no read, no write). The register and schema names used
-to read `eolProduct`/`eolCycle` data SHALL be configurable in settings,
-defaulting to the names the openconnector `endoflife-date-source` change
+to read `eol_product`/`eol_cycle` data SHALL be configurable in settings,
+defaulting to the names the Integriq `endoflife-date-source` change
 provisions.
 
 #### Scenario: A mapped module is eligible for matching
@@ -23,15 +23,29 @@ provisions.
 #### Scenario: Register and schema names are configurable, not hardcoded
 
 - **WHEN** an admin opens the EOL sync settings panel
-- **THEN** the register slug and the `eolProduct`/`eolCycle` schema slugs are
-  editable fields, pre-filled with the defaults matching the openconnector
+- **THEN** the register slug and the `eol_product`/`eol_cycle` schema slugs are
+  editable fields, pre-filled with the defaults matching the Integriq
   `endoflife-date-source` change's provisioned names
 - **AND** changing them takes effect on the next sync without a code change
+
+#### Scenario: a stored configuration survives a rename on the provisioning side
+
+- **GIVEN** an admin saved the EOL sync configuration before Integriq's register
+  was renamed from `openconnector` to `integriq` and its two schemas from
+  `eolProduct`/`eolCycle` to `eol_product`/`eol_cycle`
+- **WHEN** the app is upgraded
+- **THEN** the stored `register`, `productSchema` and `cycleSchema` values are
+  re-pointed at the current slugs
+- **AND** a configuration naming any other register or schema is left exactly as
+  the admin wrote it, because the guard is the exact stored value and not the
+  field name
+- **AND** a second upgrade changes nothing
+- @e2e exclude a repair step runs at `occ upgrade` and nowhere else, so no browser session can reach it. The decision table, including the leave-alone cases, is covered by `tests/Unit/Repair/RepointEolSyncConfigTest.php`.
 
 ### Requirement: Version matching is conservative and unambiguous only
 
 The matcher SHALL compare a `moduleVersie.versie` string against the `cycle`
-values of the mapped module's `eolCycle` rows using version-prefix matching
+values of the mapped module's `eol_cycle` rows using version-prefix matching
 (most-specific level first) and SHALL stamp a value **only** when exactly one
 cycle matches at the most-specific level. When zero cycles match, or more
 than one cycle matches at the same most-specific level (an ambiguous tie),
@@ -41,7 +55,7 @@ untouched.
 #### Scenario: Unambiguous match stamps the version
 
 - **WHEN** a `moduleVersie` with `versie` `21.3.1` is matched against
-  `eolCycle` rows containing exactly one cycle `21.3` for the mapped product
+  `eol_cycle` rows containing exactly one cycle `21.3` for the mapped product
 - **THEN** that `moduleVersie` is stamped from the `21.3` cycle's `eol` date
 
 #### Scenario: Ambiguous match is skipped, not guessed
@@ -116,7 +130,7 @@ the same underlying sync/match logic.
 
 The matcher SHALL make no changes and SHALL NOT raise an error to the end
 user when the configured EOL register or schema cannot be resolved
-(openconnector not installed, register/schema missing, or the sync is
+(Integriq not installed, register/schema missing, or the sync is
 disabled in settings). The settings status SHALL report the feed as
 unavailable with a reason, distinct from "configured but zero matches yet".
 Manual entry of `datumEindeOndersteuning`, the EOL-approaching filter, the
@@ -133,16 +147,16 @@ regardless of feed availability.
 
 #### Scenario: Core lifecycle capability is unaffected by feed absence
 
-- **WHEN** the openconnector `endoflife-date-source` change is not installed
+- **WHEN** the Integriq `endoflife-date-source` change is not installed
 - **THEN** users can still enter `datumEindeOndersteuning` manually, the
   EOL-approaching filter and roadmap still work, and the
   `eol-approaching` notification rule still evaluates existing dates
 
 ### Requirement: Softwarecatalog performs no direct HTTP to the EOL feed
 
-All fetching of endoflife.date data SHALL happen in the openconnector
+All fetching of endoflife.date data SHALL happen in the Integriq
 `endoflife-date-source` source/synchronization; stackiq SHALL only
-read already-ingested `eolProduct`/`eolCycle` objects via OpenRegister's
+read already-ingested `eol_product`/`eol_cycle` objects via OpenRegister's
 `ObjectService`/`ConfigurationService`. No HTTP client, URL configuration
 field, or outbound network call to endoflife.date (or any other EOL feed)
 SHALL exist in stackiq code.

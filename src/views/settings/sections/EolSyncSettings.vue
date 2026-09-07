@@ -3,14 +3,14 @@
  - @license EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  -
  - EOL feed sync admin section: configure the register/schema names the
- - matcher reads `eolProduct`/`eolCycle` from (provisioned by the sibling
- - openconnector `endoflife-date-source` change), enable/disable the feature,
+ - matcher reads `eol_product`/`eol_cycle` from (provisioned by the sibling
+ - Integriq `endoflife-date-source` change), enable/disable the feature,
  - and trigger a manual "sync now" run. Rendered inside the admin settings
  - panel — admin-gated by the IDelegatedSettings framework and by the default
  - admin-required posture of every SettingsController method (no
  - `@NoAdminRequired`); NOT registered in the in-app router. Shows
  - "unavailable" as a status, never an error, when the feed cannot be
- - resolved (openconnector not installed, disabled, or misconfigured) — per
+ - resolved (Integriq not installed, disabled, or misconfigured) — per
  - the graceful-degradation requirement, manual `datumEindeOndersteuning`
  - entry keeps working regardless of what this panel shows.
  -->
@@ -90,7 +90,7 @@
 					{{
 						t(
 							'stackiq',
-							'Pre-filled with the names the openconnector endoflife-date-source change provisions. Change them if your instance uses different names — no code change required.',
+							'Pre-filled with the names the Integriq endoflife-date-source change provisions. Change them if your instance uses different names, no code change required.',
 						)
 					}}
 				</p>
@@ -100,11 +100,11 @@
 					:disabled="!config.enabled" />
 				<NcTextField
 					v-model="config.productSchema"
-					:label="t('stackiq', 'eolProduct schema slug')"
+					:label="t('stackiq', 'eol_product schema slug')"
 					:disabled="!config.enabled" />
 				<NcTextField
 					v-model="config.cycleSchema"
-					:label="t('stackiq', 'eolCycle schema slug')"
+					:label="t('stackiq', 'eol_cycle schema slug')"
 					:disabled="!config.enabled" />
 			</div>
 
@@ -162,7 +162,7 @@ const REASON_LABELS = {
 	'eol-register-or-schema-not-found': () =>
 		t(
 			'stackiq',
-			'the configured register or schema could not be found — is the openconnector endoflife-date-source change installed?',
+			'the configured register or schema could not be found. Is the Integriq endoflife-date-source change installed?',
 		),
 }
 
