@@ -14,7 +14,6 @@
 import axios from '@nextcloud/axios'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-
 import { fetchFacets } from '../../src/services/facets.js'
 import { useFacetStore } from '../../src/store/modules/facets.js'
 

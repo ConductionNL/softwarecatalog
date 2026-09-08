@@ -13,7 +13,6 @@
  */
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it } from 'vitest'
-
 import { useNavigationStore } from '../../src/store/modules/navigation.js'
 
 describe('Navigation Store', () => {
