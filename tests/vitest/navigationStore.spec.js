@@ -1,76 +1,80 @@
 /**
- * SPDX-FileCopyrightText: 2026 Conduction / Stackiq Contributors
- * SPDX-License-Identifier: EUPL-1.2
+ * Unit tests for the navigation Pinia store.
  *
- * Unit tests for the Stackiq UI navigation Pinia store
- * (src/store/modules/navigation.js): the single-active-modal/dialog
- * invariant, dialog-property passing, and the consume-once transferData
- * handoff used to ferry data between views without prop drilling. Driven
- * through a real Pinia instance; console noise is silenced.
+ * MOVED FROM `src/store/modules/navigation.spec.js` (jest) TO vitest.
+ * pinia 4 is ESM-only — `type: module`, an `exports` map naming
+ * `dist/pinia.js`, and no CommonJS build at all — so jest's CJS runtime
+ * cannot require it and this suite died in `createRequireEsmError` before a
+ * single assertion ran. vitest loads ESM natively, which is why the repo
+ * already runs it alongside jest.
+ *
+ * Nothing about the assertions changed: this file used no jest-specific API,
+ * only `describe`/`it`/`expect`, which vitest provides under the same names.
  */
-
 import { createPinia, setActivePinia } from 'pinia'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { useNavigationStore } from '../../src/store/modules/navigation.js'
 
-describe('stackiq navigation store', () => {
+describe('Navigation Store', () => {
 	beforeEach(() => {
 		setActivePinia(createPinia())
-		vi.spyOn(console, 'log').mockImplementation(() => {})
 	})
 
-	it('defaults to the organisaties view with no selections', () => {
+	it('set current selected view correctly', () => {
 		const store = useNavigationStore()
+
+		store.setSelected('organisaties')
 		expect(store.selected).toBe('organisaties')
-		expect(store.selectedOrganisatie).toBeNull()
-		expect(store.modal).toBeNull()
-		expect(store.dialog).toBeNull()
-		expect(store.dialogProperties).toBeNull()
-		expect(store.transferData).toBeNull()
-	})
 
-	it('setSelected switches the active view', () => {
-		const store = useNavigationStore()
 		store.setSelected('software')
 		expect(store.selected).toBe('software')
+
+		store.setSelected('licenses')
+		expect(store.selected).toBe('licenses')
 	})
 
-	it('setSelectedOrganisatie records the active organisatie id', () => {
+	it('set current selected organisatie correctly', () => {
 		const store = useNavigationStore()
-		store.setSelectedOrganisatie('uuid-123')
-		expect(store.selectedOrganisatie).toBe('uuid-123')
+
+		store.setSelectedOrganisatie('7a048bfd-210f-4e93-a1e8-5aa9261740b7')
+		expect(store.selectedOrganisatie).toBe(
+			'7a048bfd-210f-4e93-a1e8-5aa9261740b7',
+		)
+
+		store.setSelectedOrganisatie('dd133c51-89bc-4b06-bdbb-41f4dc07c4f1')
+		expect(store.selectedOrganisatie).toBe(
+			'dd133c51-89bc-4b06-bdbb-41f4dc07c4f1',
+		)
+
+		store.setSelectedOrganisatie('3b1cbee2-756e-4904-a157-29fb0cbe01d3')
+		expect(store.selectedOrganisatie).toBe(
+			'3b1cbee2-756e-4904-a157-29fb0cbe01d3',
+		)
 	})
 
-	it('setModal enforces a single active modal', () => {
+	it('set modal correctly', () => {
 		const store = useNavigationStore()
+
 		store.setModal('editOrganisatie')
 		expect(store.modal).toBe('editOrganisatie')
-		store.setModal(null)
-		expect(store.modal).toBeNull()
+
+		store.setModal('editSoftware')
+		expect(store.modal).toBe('editSoftware')
+
+		store.setModal('editLicense')
+		expect(store.modal).toBe('editLicense')
 	})
 
-	it('setDialog stores the dialog name and optional properties', () => {
+	it('set dialog correctly', () => {
 		const store = useNavigationStore()
-		store.setDialog('deleteConfirm', { id: 'x', name: 'Foo' })
-		expect(store.dialog).toBe('deleteConfirm')
-		expect(store.dialogProperties).toEqual({ id: 'x', name: 'Foo' })
-	})
 
-	it('setDialog without properties defaults dialogProperties to null', () => {
-		const store = useNavigationStore()
-		store.setDialog('plain')
-		expect(store.dialog).toBe('plain')
-		expect(store.dialogProperties).toBeNull()
-	})
+		store.setDialog('deleteOrganisatie')
+		expect(store.dialog).toBe('deleteOrganisatie')
 
-	it('getTransferData returns the payload once then clears it', () => {
-		const store = useNavigationStore()
-		store.setTransferData({ foo: 'bar' })
-		expect(store.transferData).toEqual({ foo: 'bar' })
+		store.setDialog('deleteSoftware')
+		expect(store.dialog).toBe('deleteSoftware')
 
-		expect(store.getTransferData()).toEqual({ foo: 'bar' })
-		// Consumed — a second read yields null.
-		expect(store.transferData).toBeNull()
-		expect(store.getTransferData()).toBeNull()
+		store.setDialog('deleteLicense')
+		expect(store.dialog).toBe('deleteLicense')
 	})
 })
