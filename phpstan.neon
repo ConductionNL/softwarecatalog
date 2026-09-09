@@ -22,6 +22,10 @@ parameters:
         # class` errors that a bare ignore pattern cannot fix. Analysis-only;
         # never loaded at runtime or by PHPUnit.
         - tests/analysis-stubs/decidesk-events.stub.php
+        # The SAME contract under the namespace that app renamed to. Both
+        # spellings are in the field, and without this one the analyser proves
+        # the newer half of the inbound guard dead.
+        - tests/analysis-stubs/decidiq-events.stub.php
 
     ignoreErrors:
         # OrganizationSyncService's `if ($contactObject !== null)` at the top of
