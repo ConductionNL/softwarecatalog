@@ -77,6 +77,33 @@ class ContractApprovalService {
 	];
 
 	/**
+	 * The fully-qualified conclusion-event class spellings, NEWEST FIRST — what
+	 * {@see \OCA\Stackiq\AppInfo\Application} attaches the inbound listener to.
+	 *
+	 * THE INBOUND HALF OF THE SAME PROBLEM AS THE CONSTANT ABOVE, and it stayed
+	 * broken after that one was fixed. Application.php imported
+	 * `OCA\Decidesk\Event\DecisionConcludedEvent` and registered `::class`,
+	 * which resolves at COMPILE TIME to a string nothing dispatches any more, so
+	 * the listener attached to a name that never fires. Nothing errors: an
+	 * event with no listener and a listener on no event look identical from
+	 * here, and the contract simply never leaves `In onderhandeling`.
+	 *
+	 * Measured 2026-09-09 against decidiq development d72839c:
+	 * OCA\Decidiq\Event\DecisionConcludedEvent EXISTS with the full getter
+	 * surface this app reads (getSourceApp, getSubjectId, getExternalReference,
+	 * getDecisionId, getStatus); OCA\Decidesk\Event\DecisionConcludedEvent is
+	 * MISSING. The old spelling is kept regardless — an instance pinned to a
+	 * release from before that rename still dispatches it, and dropping it here
+	 * re-breaks the integration in the other direction.
+	 *
+	 * @var array<int, string>
+	 */
+	public const DECISION_CONCLUDED_EVENTS = [
+		'\\OCA\\Decidiq\\Event\\DecisionConcludedEvent',
+		'\\OCA\\Decidesk\\Event\\DecisionConcludedEvent',
+	];
+
+	/**
 	 * This consumer app id, stamped on the request event as `sourceApp` and
 	 * used by the conclusion listener to filter inbound events.
 	 *

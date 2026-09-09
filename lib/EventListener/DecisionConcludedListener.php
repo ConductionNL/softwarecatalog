@@ -30,7 +30,8 @@ declare(strict_types=1);
 
 namespace OCA\Stackiq\EventListener;
 
-use OCA\Decidesk\Event\DecisionConcludedEvent;
+use OCA\Decidesk\Event\DecisionConcludedEvent as DecideskDecisionConcludedEvent;
+use OCA\Decidiq\Event\DecisionConcludedEvent as DecidiqDecisionConcludedEvent;
 use OCA\Stackiq\Service\ContractApprovalService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -71,7 +72,19 @@ class DecisionConcludedListener implements IEventListener {
 	 * @spec openspec/specs/contract-decision-delegation/spec.md
 	 */
 	public function handle(Event $event): void {
-		if (($event instanceof DecisionConcludedEvent) === false) {
+		// BOTH SPELLINGS. The decision app renamed its PSR-4 root from
+		// OCA\Decidesk to OCA\Decidiq with no compatibility alias, so an
+		// `instanceof` against one name silently rejects the other app's real
+		// event and this method returns as if the event were somebody else's.
+		// The two classes publish an identical getter surface (verified against
+		// decidiq development d72839c), so everything below is unchanged.
+		//
+		// `instanceof` against a class that is not installed is simply false —
+		// it neither autoloads nor errors — which is why naming both here costs
+		// nothing on an instance that runs only one of them.
+		if (($event instanceof DecidiqDecisionConcludedEvent) === false
+			&& ($event instanceof DecideskDecisionConcludedEvent) === false
+		) {
 			return;
 		}
 
