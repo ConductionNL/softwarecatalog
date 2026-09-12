@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace OCA\Stackiq\AppInfo;
 
-use OCA\Decidesk\Event\DecisionConcludedEvent;
 use OCA\OpenRegister\Contract\ObjectServiceInterface;
 use OCA\OpenRegister\Event\ObjectCreatedEvent;
 use OCA\OpenRegister\Event\ObjectUpdatedEvent;
@@ -803,13 +802,31 @@ class Application extends App implements IBootstrap {
 		// Sync user profile updates into the contactpersoon mirror.
 		$context->registerEventListener(UserProfileUpdatedEvent::class, UserProfileUpdatedEventListener::class);
 
-		// Project a concluded decidesk contract-approval Decision onto the
-		// catalog contract. Only fires when decidesk is installed (it owns the
-		// DecisionConcludedEvent class); the listener filters by sourceApp and
+		// Project a concluded contract-approval Decision from the decision app
+		// onto the catalog contract. The listener filters by sourceApp and
 		// IDOR-checks the decision id before projecting (the In onderhandeling
 		// -> Actief transition is reached only here). Replaces the former HTTP
 		// outcome-callback + daily reconcile poll.
-		$context->registerEventListener(DecisionConcludedEvent::class, DecisionConcludedListener::class);
+		//
+		// BOTH SPELLINGS, by FQN STRING rather than `::class`. That app renamed
+		// its PSR-4 root from OCA\Decidesk to OCA\Decidiq with no compatibility
+		// alias, and `::class` on an imported name resolves at COMPILE TIME — so
+		// this registered a class nothing dispatches any more, the listener
+		// never fired, and every approved contract stayed in `In onderhandeling`.
+		// An event with no listener and a listener on no event look identical
+		// from here: nothing throws, nothing is logged.
+		//
+		// Registering a name that does not resolve is harmless, because dispatch
+		// matches on the concrete event class, but the guard is kept so this
+		// stays symmetric with ContractApprovalService::isDelegationConfigured()
+		// on the outbound side.
+		foreach (ContractApprovalService::DECISION_CONCLUDED_EVENTS as $concludedEvent) {
+			if (class_exists($concludedEvent) === false) {
+				continue;
+			}
+
+			$context->registerEventListener($concludedEvent, DecisionConcludedListener::class);
+		}
 
 	}//end registerEventListeners()
 

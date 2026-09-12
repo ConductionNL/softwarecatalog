@@ -4,7 +4,7 @@
  * EOL Sync Service.
  *
  * Orchestrates the `eol-feed-integration` matcher: resolves the configured
- * `eolProduct`/`eolCycle` register/schema (provisioned by the sibling
+ * `eol_product`/`eol_cycle` register/schema (provisioned by the sibling
  * openconnector `endoflife-date-source` change), reads only via
  * OpenRegister's `ObjectService` — never HTTP — finds every catalog module
  * with an `eolProductSlug` mapping, delegates the actual matching/stamping
@@ -232,7 +232,7 @@ class EolSyncService {
 	}//end run()
 
 	/**
-	 * Resolve the configured EOL register + `eolProduct`/`eolCycle` schemas
+	 * Resolve the configured EOL register + `eol_product`/`eol_cycle` schemas
 	 * on the given `ObjectService` context. Returns false (never throws)
 	 * when the register or either schema cannot be found.
 	 *
@@ -266,7 +266,7 @@ class EolSyncService {
 	 * Find every module with a non-empty `eolProductSlug` mapping.
 	 *
 	 * Modules without the mapping are never read individually again after
-	 * this listing pass — the per-module `eolCycle` read and `moduleVersie`
+	 * this listing pass — the per-module `eol_cycle` read and `moduleVersie`
 	 * write only happen for mapped modules (design.md non-functional
 	 * performance note).
 	 *
@@ -302,7 +302,7 @@ class EolSyncService {
 	}//end findMappedModules()
 
 	/**
-	 * Fetch the `eolCycle` rows for one product slug, scoped to the
+	 * Fetch the `eol_cycle` rows for one product slug, scoped to the
 	 * configured EOL register/schema. Defensively re-filters on `product`
 	 * in PHP in case the underlying query filter is looser than an exact
 	 * match — matching must never cross into another product's cycles
@@ -312,7 +312,7 @@ class EolSyncService {
 	 * @param array $config The EOL sync configuration.
 	 * @param string $productSlug The mapped module's `eolProductSlug`.
 	 *
-	 * @return array The matching `eolCycle` rows (normalised arrays).
+	 * @return array The matching `eol_cycle` rows (normalised arrays).
 	 */
 	private function fetchCycles(ObjectServiceInterface $objectService, array $config, string $productSlug): array {
 		try {
@@ -328,7 +328,7 @@ class EolSyncService {
 			);
 		} catch (\Throwable $e) {
 			$this->logger->warning(
-				'[EolSyncService] Failed to read eolCycle rows for product — module skipped this run',
+				'[EolSyncService] Failed to read eol_cycle rows for product — module skipped this run',
 				['product' => $productSlug, 'error' => $e->getMessage()]
 			);
 			return [];

@@ -50,7 +50,7 @@ Vrij en open source onder de EUPL-licentie.
 
 **Ondersteuning:** Voor ondersteuning, neem contact op via support@conduction.nl. Voor een Service Level Agreement (SLA), neem contact op via sales@conduction.nl.
     ]]></description>
-    <version>0.2.0</version>
+    <version>0.2.2-unstable.20260910105110</version>
     <licence>EUPL-1.2</licence>
     <author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
     <namespace>Stackiq</namespace>
@@ -207,6 +207,20 @@ Vrij en open source onder de EUPL-licentie.
 				this becomes the catalogue facet.
 			-->
 			<step>OCA\Stackiq\Repair\RenameCollidingSchemaSlugs</step>
+			<!-- The EOL feature addresses Integriq's register and its two schemas
+			     by SLUG, and all three moved: `openconnector` -> `integriq` in the
+			     fleet rename, and `eolProduct`/`eolCycle` -> `eol_product`/`eol_cycle`.
+			     The defaults in SettingsService moved with them, so this step is for
+			     the install whose admin opted in and therefore has the old literals
+			     stored, where the default never applies. A stale slug fails SILENTLY:
+			     an unresolvable schema reads as "this module has no EOL data", so the
+			     sync runs, reports success and stamps nothing.
+
+			     Runs after MigrateAppConfigKeys, which is what moves the blob into
+			     the `stackiq` namespace in the first place; re-pointing before that
+			     would rewrite a key nothing reads. Idempotent, and guarded on the
+			     exact stored value so an admin's own register is never touched. -->
+			<step>OCA\Stackiq\Repair\RepointEolSyncConfig</step>
 			<step>OCA\Stackiq\Repair\InitializeSettings</step>
 			<step>OCA\Stackiq\Repair\MigrateContactsToNc</step>
 			<step>OCA\Stackiq\Repair\BackfillContractApprovalState</step>
@@ -285,9 +299,32 @@ Vrij en open source onder de EUPL-licentie.
 				this becomes the catalogue facet.
 			-->
 			<step>OCA\Stackiq\Repair\RenameCollidingSchemaSlugs</step>
+			<!-- The EOL feature addresses Integriq's register and its two schemas
+			     by SLUG, and all three moved: `openconnector` -> `integriq` in the
+			     fleet rename, and `eolProduct`/`eolCycle` -> `eol_product`/`eol_cycle`.
+			     The defaults in SettingsService moved with them, so this step is for
+			     the install whose admin opted in and therefore has the old literals
+			     stored, where the default never applies. A stale slug fails SILENTLY:
+			     an unresolvable schema reads as "this module has no EOL data", so the
+			     sync runs, reports success and stamps nothing.
+
+			     Runs after MigrateAppConfigKeys, which is what moves the blob into
+			     the `stackiq` namespace in the first place; re-pointing before that
+			     would rewrite a key nothing reads. Idempotent, and guarded on the
+			     exact stored value so an admin's own register is never touched. -->
+			<step>OCA\Stackiq\Repair\RepointEolSyncConfig</step>
 			<step>OCA\Stackiq\Repair\InitializeSettings</step>
 		</install>
 	</repair-steps>
+
+	<commands>
+		<!-- Audit, and on request backfill, the catalogContract to shillinq
+		     Contract uuid reference. Read-only unless the write option is
+		     given, and it fills in only an unambiguous single match on the
+		     shared `contractNumber`: a wrong cross-app link is worse than an
+		     empty one. -->
+		<command>OCA\Stackiq\Command\ReferencesAuditCommand</command>
+	</commands>
 
 	<settings>
 		<admin>OCA\Stackiq\Settings\StackiqAdmin</admin>

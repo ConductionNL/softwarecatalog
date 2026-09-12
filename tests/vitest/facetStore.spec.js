@@ -1,6 +1,11 @@
 /**
  * Unit tests for the GEMMA facet Pinia store (gemma-faceted-search).
  *
+ * MOVED FROM `src/store/modules/facets.spec.js` (jest) TO vitest. pinia 4 is
+ * ESM-only — `type: module`, an `exports` map naming `dist/pinia.js`, and no
+ * CommonJS build at all — so jest's CJS runtime cannot require it and this
+ * suite died in `createRequireEsmError` before a single assertion ran.
+ *
  * @spec openspec/changes/gemma-faceted-search/tasks.md#task-10
  * @spec openspec/specs/gemma-faceted-search/spec.md#requirement-filter-state-is-url-encoded-and-deep-linkable
  * @spec openspec/specs/gemma-faceted-search/spec.md#requirement-a-facet-selection-can-be-saved-as-a-view
@@ -8,30 +13,33 @@
 
 import axios from '@nextcloud/axios'
 import { createPinia, setActivePinia } from 'pinia'
-import { fetchFacets } from '../../services/facets.js'
-import { useFacetStore } from './facets.js'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { fetchFacets } from '../../src/services/facets.js'
+import { useFacetStore } from '../../src/store/modules/facets.js'
 
-// `virtual: true` — see facets.spec.js (services) for why: `@nextcloud/axios`
-// is ESM-only (`exports` map with no `require` condition) and unresolvable
-// by Jest's CJS resolver even for mocking purposes.
-jest.mock(
-	'@nextcloud/axios',
-	() => ({
-		get: jest.fn(),
-		post: jest.fn(),
-	}),
-	{ virtual: true },
-)
-
-jest.mock('@nextcloud/router', () => ({
-	generateUrl: jest.fn((path) => path),
+// The jest original needed `{ virtual: true }` here, because `@nextcloud/axios`
+// is ESM-only (an `exports` map with no `require` condition) and jest's CJS
+// resolver could not load it even to mock it. vitest resolves ESM natively, so
+// the mock is an ordinary one.
+vi.mock('@nextcloud/axios', () => ({
+	default: {
+		get: vi.fn(),
+		post: vi.fn(),
+	},
 }))
 
-jest.mock('../../services/facets.js', () => {
-	const actual = jest.requireActual('../../services/facets.js')
+vi.mock('@nextcloud/router', () => ({
+	generateUrl: vi.fn((path) => path),
+}))
+
+// `importActual` is ASYNC where `jest.requireActual` was synchronous, so the
+// factory becomes async. Everything else about the partial mock is the same:
+// keep the real module and replace one export.
+vi.mock('../../src/services/facets.js', async () => {
+	const actual = await vi.importActual('../../src/services/facets.js')
 	return {
 		...actual,
-		fetchFacets: jest.fn(),
+		fetchFacets: vi.fn(),
 	}
 })
 

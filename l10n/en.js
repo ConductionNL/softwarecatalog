@@ -531,8 +531,8 @@ OC.L10N.register(
         "EOL sync did not run: {reason}": "EOL sync did not run: {reason}",
         "EOL sync failed": "EOL sync failed",
         "EOL sync settings saved": "EOL sync settings saved",
-        "eolCycle schema slug": "eolCycle schema slug",
-        "eolProduct schema slug": "eolProduct schema slug",
+        "eol_cycle schema slug": "eol_cycle schema slug",
+        "eol_product schema slug": "eol_product schema slug",
         "Feed unavailable: {reason}. Manual end-of-support entry, the EOL-approaching filter, the roadmap, and the notification rule keep working regardless.": "Feed unavailable: {reason}. Manual end-of-support entry, the EOL-approaching filter, the roadmap, and the notification rule keep working regardless.",
         "Fold this organisation into another one (gemeentelijke herindeling or leveranciersovername). Every contract, usage record, contact person, offering and compliance record is re-pointed to the target; this organisation is then marked as merged, never deleted.": "Fold this organisation into another one (gemeentelijke herindeling or leveranciersovername). Every contract, usage record, contact person, offering and compliance record is re-pointed to the target; this organisation is then marked as merged, never deleted.",
         "Go to the organisation it was merged into": "Go to the organisation it was merged into",
@@ -548,7 +548,6 @@ OC.L10N.register(
         "OpenRegister is not currently reachable": "OpenRegister is not currently reachable",
         "OpenRegister is not installed": "OpenRegister is not installed",
         "Organisation successfully merged.": "Organisation successfully merged.",
-        "Pre-filled with the names the openconnector endoflife-date-source change provisions. Change them if your instance uses different names — no code change required.": "Pre-filled with the names the openconnector endoflife-date-source change provisions. Change them if your instance uses different names — no code change required.",
         "Preview merge": "Preview merge",
         "Records that will be re-pointed to {target}:": "Records that will be re-pointed to {target}:",
         "Register slug": "Register slug",
@@ -559,7 +558,6 @@ OC.L10N.register(
         "Sync interval (minutes)": "Sync interval (minutes)",
         "Sync now": "Sync now",
         "Target organisation": "Target organisation",
-        "the configured register or schema could not be found — is the openconnector endoflife-date-source change installed?": "the configured register or schema could not be found — is the openconnector endoflife-date-source change installed?",
         "the module/moduleVersie schema is not configured yet": "the module/moduleVersie schema is not configured yet",
         "The scheduled background job re-runs the matcher at this interval; the minimum enforced interval is 5 minutes.": "The scheduled background job re-runs the matcher at this interval; the minimum enforced interval is 5 minutes.",
         "This organisation has been merged and is no longer active.": "This organisation has been merged and is no longer active.",
@@ -704,7 +702,9 @@ OC.L10N.register(
         "Pick a report to open it.": "Pick a report to open it.",
         "Overlapping and ageing software across the portfolio.": "Overlapping and ageing software across the portfolio.",
         "xmlns": "xmlns",
-        "xsi": "xsi"
+        "xsi": "xsi",
+        "Pre-filled with the names the Integriq endoflife-date-source change provisions. Change them if your instance uses different names, no code change required.": "Pre-filled with the names the Integriq endoflife-date-source change provisions. Change them if your instance uses different names, no code change required.",
+        "the configured register or schema could not be found. Is the Integriq endoflife-date-source change installed?": "the configured register or schema could not be found. Is the Integriq endoflife-date-source change installed?"
     },
     "nplurals=2; plural=(n != 1);"
 )

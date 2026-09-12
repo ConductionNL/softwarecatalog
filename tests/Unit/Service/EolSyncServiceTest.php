@@ -38,9 +38,9 @@ class EolSyncServiceTest extends TestCase {
 
 	private const DEFAULT_CONFIG = [
 		'enabled' => true,
-		'register' => 'openconnector',
-		'productSchema' => 'eolProduct',
-		'cycleSchema' => 'eolCycle',
+		'register' => 'integriq',
+		'productSchema' => 'eol_product',
+		'cycleSchema' => 'eol_cycle',
 		'intervalSeconds' => 86400,
 	];
 

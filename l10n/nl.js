@@ -552,10 +552,9 @@ OC.L10N.register(
         "Enable EOL feed sync": "EOL-feedsynchronisatie inschakelen",
         "When disabled, the matcher never reads or writes anything — the same as the feed being unavailable.": "Indien uitgeschakeld, leest of schrijft de matcher nooit iets — hetzelfde als wanneer de feed niet beschikbaar is.",
         "Source register and schemas": "Bronregister en schema's",
-        "Pre-filled with the names the openconnector endoflife-date-source change provisions. Change them if your instance uses different names — no code change required.": "Vooraf ingevuld met de namen die de openconnector-wijziging endoflife-date-source aanmaakt. Wijzig ze als uw omgeving andere namen gebruikt — geen codewijziging nodig.",
         "Register slug": "Register-slug",
-        "eolProduct schema slug": "eolProduct-schema-slug",
-        "eolCycle schema slug": "eolCycle-schema-slug",
+        "eol_product schema slug": "eol_product-schema-slug",
+        "eol_cycle schema slug": "eol_cycle-schema-slug",
         "Schedule": "Planning",
         "Sync interval (minutes)": "Synchronisatie-interval (minuten)",
         "The scheduled background job re-runs the matcher at this interval; the minimum enforced interval is 5 minutes.": "De geplande achtergrondtaak voert de matcher opnieuw uit met dit interval; het minimaal afgedwongen interval is 5 minuten.",
@@ -571,7 +570,6 @@ OC.L10N.register(
         "OpenRegister is not installed": "OpenRegister is niet geïnstalleerd",
         "OpenRegister is not currently reachable": "OpenRegister is momenteel niet bereikbaar",
         "the module/moduleVersie schema is not configured yet": "het module-/moduleVersie-schema is nog niet geconfigureerd",
-        "the configured register or schema could not be found — is the openconnector endoflife-date-source change installed?": "het geconfigureerde register of schema kon niet worden gevonden — is de openconnector-wijziging endoflife-date-source geïnstalleerd?",
         "never": "nooit",
         "Annualised cost": "Jaarlijkse kosten",
         "Applications in use": "Applicaties in gebruik",
@@ -777,7 +775,9 @@ OC.L10N.register(
         "Store": "Store",
         "Install catalogue configurations that other organisations have published: a way of describing software, or the flows that keep an entry current.": "Installeer registers, schema's en flows die andere organisaties hebben gepubliceerd.",
         "xmlns": "xmlns",
-        "xsi": "xsi"
+        "xsi": "xsi",
+        "Pre-filled with the names the Integriq endoflife-date-source change provisions. Change them if your instance uses different names, no code change required.": "Vooraf ingevuld met de namen die de Integriq-wijziging endoflife-date-source aanmaakt. Wijzig ze als uw omgeving andere namen gebruikt, geen codewijziging nodig.",
+        "the configured register or schema could not be found. Is the Integriq endoflife-date-source change installed?": "het geconfigureerde register of schema kon niet worden gevonden. Is de Integriq-wijziging endoflife-date-source geïnstalleerd?"
     },
     "nplurals=2; plural=(n != 1);"
 )

@@ -7149,27 +7149,38 @@ class SettingsService {
 	private const EOL_SYNC_STATUS_KEY = 'eol_sync_status';
 
 	/**
-	 * The register slug the sibling openconnector `endoflife-date-source`
-	 * change provisions `eolProduct`/`eolCycle` into, used as the default
-	 * when no admin override is configured.
+	 * The register slug the sibling Integriq `endoflife-date-source` change
+	 * provisions `eol_product`/`eol_cycle` into, used as the default when no
+	 * admin override is configured.
+	 *
+	 * Was `openconnector`. That register was renamed to `integriq` in the fleet
+	 * rename and this default was left behind, so a default configuration has
+	 * been resolving a register that does not answer to that name. It failed
+	 * silently, because the feature is opt-in and an unresolvable register reads
+	 * as "no EOL data" rather than as an error.
 	 *
 	 * @var string
 	 */
-	private const EOL_DEFAULT_REGISTER = 'openconnector';
+	private const EOL_DEFAULT_REGISTER = 'integriq';
 
 	/**
-	 * The default `eolProduct` schema slug (design.md Decision 5).
+	 * The default `eol_product` schema slug (design.md Decision 5).
+	 *
+	 * Was `eolProduct`, renamed to snake_case in Integriq along with
+	 * `eolCycle`; they were the only two camelCase slugs in that register.
 	 *
 	 * @var string
 	 */
-	private const EOL_DEFAULT_PRODUCT_SCHEMA = 'eolProduct';
+	private const EOL_DEFAULT_PRODUCT_SCHEMA = 'eol_product';
 
 	/**
-	 * The default `eolCycle` schema slug (design.md Decision 5).
+	 * The default `eol_cycle` schema slug (design.md Decision 5).
+	 *
+	 * Was `eolCycle`. See the note on the product schema above.
 	 *
 	 * @var string
 	 */
-	private const EOL_DEFAULT_CYCLE_SCHEMA = 'eolCycle';
+	private const EOL_DEFAULT_CYCLE_SCHEMA = 'eol_cycle';
 
 	/**
 	 * The default scheduled-sync interval in seconds (24 hours).
@@ -7180,8 +7191,8 @@ class SettingsService {
 
 	/**
 	 * Get the EOL sync configuration: whether the feature is enabled, the
-	 * register/schema slugs to read `eolProduct`/`eolCycle` from, and the
-	 * scheduled-sync interval. Defaults match what the sibling openconnector
+	 * register/schema slugs to read `eol_product`/`eol_cycle` from, and the
+	 * scheduled-sync interval. Defaults match what the sibling Integriq
 	 * `endoflife-date-source` change provisions (design.md Decision 5) —
 	 * the feature is disabled by default until an admin opts in.
 	 *
