@@ -2,7 +2,7 @@
     "openapi": "3.0.3",
     "info": {
         "title": "stackiq",
-        "version": "0.2.0",
+        "version": "0.2.2-beta.20260912135959",
         "description": "Stackiq",
         "license": {
             "name": "agpl"
